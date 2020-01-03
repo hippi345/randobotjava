@@ -14,6 +14,20 @@ import java.util.logging.Logger;
 public class Main extends Application {
 
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+    // Matt Comment
+    // Since x and y are things, you might be better to make them into a class called
+    // point or something, so that idea is abstracted up higher.
+
+    // Also, this is your bug.  Since you're initializing them to 0, 0, when you hit autoplay
+    // and you didn't set the treasure or anything, your bot and your treasure will always be
+    // at 0,0.  Maybe try calling their set functions when the game loads?
+
+    // Some of the variables you have in here aren't used at all.  If it isn't used, it's just noise
+    // and I'd recommend you remove it.  You can always add it back in when you need it later.
+
+    // Last, I'd write comments above each function as to what they do, just so it's easier for people
+    // to come in and be like "reset.. oh yeah okay it resets the game, yeah that makes sense"... looking
+    // now, reset could be resetting anything.. placement of something, turns.. no idea.
     private static int botX = 0;
     private static int botY = 0;
     private static int treasureX = 0;
@@ -24,10 +38,21 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception
     {
+        // Matt Comment
+        // There's 2 variables here that basically have the same name, which on first
+        // read is kind of confusing.  I'd simplify it down to just like "getParameters().getRaw()",
+        // if someone is reading this and it takes more than 1 read over, it's too confusing.
         final Parameters params = getParameters();
         final List<String> parameters = params.getRaw();
         GridPane gridPane = new GridPane();
 
+        // Matt Comment
+        // This section is too long, and there's a lot of repeated code.  Try to break
+        // this out into functions somehow to make it easier to read.
+        // Like the first 2 are basically doing the same thing, just different because
+        // one is 0 args and one is more than 1 arg.  I'm also not sure why you're doing any
+        // stage setting work if these are error conditions, it should just be like "error"
+        // then bounce.
         if (parameters.size() == 0)
         {
             primaryStage.setX(50);
@@ -91,7 +116,6 @@ public class Main extends Application {
         }
     }
 
-
     public static void main(String[] args)
     {
         launch(args);
@@ -107,6 +131,9 @@ public class Main extends Application {
         System.out.println("Bot Y: " + botY);
 
         // set the appropriate label
+        // Matt Comment
+        // If you know the position of the bot, why are you looping
+        // through all the nodes to find it?
         for (Node node : gridPane.getChildren()) {
             if (node instanceof Text
                     && (GridPane.getColumnIndex(node) == botX
@@ -145,12 +172,19 @@ public class Main extends Application {
     // this is not working yet but GG on the rest
     // TODO
     // automate the plays without the button through an "automate" button
+
+    // Matt Comment
+    // This is a mess and really hard to follow.  I'd suggest moving a lot of this out to different functions if possible.
+    // Think about how to simplify the logic, and rethink naming of variables.
     private static void nextPlay(int turns, int gridSize, GridPane gridPane)
     {
         // make next move
         turnCount++;
         System.out.println("Current turn: " + turnCount);
 
+        // Matt Comment
+        // These variable names are confusing, and it isn't giving me a good idea of what they're
+        // actually supposed to do.
         int xOrY = (int) Math.round(Math.random()*2);
         int addOrSubtract = (int) Math.round(Math.random()*2);
 
