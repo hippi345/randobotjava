@@ -18,22 +18,19 @@ public class Main extends Application {
     // Since x and y are things, you might be better to make them into a class called
     // point or something, so that idea is abstracted up higher.
 
-    // Also, this is your bug.  Since you're initializing them to 0, 0, when you hit autoplay
-    // and you didn't set the treasure or anything, your bot and your treasure will always be
-    // at 0,0.  Maybe try calling their set functions when the game loads?
-
     // Some of the variables you have in here aren't used at all.  If it isn't used, it's just noise
     // and I'd recommend you remove it.  You can always add it back in when you need it later.
 
     // Last, I'd write comments above each function as to what they do, just so it's easier for people
     // to come in and be like "reset.. oh yeah okay it resets the game, yeah that makes sense"... looking
     // now, reset could be resetting anything.. placement of something, turns.. no idea.
-    private static int botX = 0;
-    private static int botY = 0;
-    private static int treasureX = 0;
-    private static int treasureY = 0;
+    private static int botX;
+    private static int botY;
+    private static int treasureX;
+    private static int treasureY;
     private static int turnCount = 0;
-    private static boolean autoPlay = false;
+    private static boolean botSet = false;
+    private static boolean treasureSet = false;
 
     @Override
     public void start(Stage primaryStage) throws Exception
@@ -66,7 +63,7 @@ public class Main extends Application {
             System.exit(1);
         }
 
-        else if (parameters.size() > 1)
+        else if (parameters.size() != 1)
         {
             primaryStage.setX(50);
             primaryStage.setY(50);
@@ -79,7 +76,7 @@ public class Main extends Application {
             System.exit(1);
         }
 
-        else if (parameters.size() == 1)
+        else
         {
             gridPane.setHgap(30);
             gridPane.setVgap(30);
@@ -99,11 +96,13 @@ public class Main extends Application {
             Button reset = new Button("Reset");
             Button autoPlay = new Button("AutoPlay");
 
-            setBot.setOnAction(event -> setBot(gridSize, gridPane, setBot));
-            setTreasure.setOnAction(event -> setTreasure(gridSize, gridPane, setTreasure));
+            setBot.setOnAction(event -> setBot(gridSize, gridPane, setBot, autoPlay));
+            setTreasure.setOnAction(event -> setTreasure(gridSize, gridPane, setTreasure, autoPlay));
             nextPlay.setOnAction(event -> nextPlay(turnCount, gridSize, gridPane));
             reset.setOnAction(event -> reset(setBot, setTreasure, gridPane, gridSize));
             autoPlay.setOnAction(event -> autoPlay(gridSize, gridPane));
+
+            autoPlay.setDisable(true);
 
             gridPane.add(setBot,1, gridSize+1);
             gridPane.add(setTreasure,1, gridSize+2);
@@ -121,9 +120,14 @@ public class Main extends Application {
         launch(args);
     }
 
-    private static void setBot(int gridSize, GridPane gridPane, Button setBot)
+    private static void setBot(int gridSize, GridPane gridPane, Button setBot, Button autoplay)
     {
         setBot.setDisable(true);
+        botSet = true;
+        if (treasureSet)
+        {
+            autoplay.setDisable(false);
+        }
         // place the bot
         botX = (int) Math.round(Math.random()*(gridSize-1));
         botY = (int) Math.round(Math.random()*(gridSize-1));
@@ -144,8 +148,13 @@ public class Main extends Application {
         }
     }
 
-    private static void setTreasure(int gridSize, GridPane gridPane, Button setTreasure)
+    private static void setTreasure(int gridSize, GridPane gridPane, Button setTreasure, Button autoplay)
     {
+        treasureSet = true;
+        if (botSet)
+        {
+            autoplay.setDisable(false);
+        }
         // place the treasure
         setTreasure.setDisable(true);
 
