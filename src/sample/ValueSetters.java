@@ -14,6 +14,18 @@ class ValueSetters
     {
         setBot.setDisable(true);
         Values.setBotSet();
+
+        // Matt Comment - 1/6
+        // I feel like this method is trying to do too much.  If I'm trying to find a bug
+        // with autoplay setting to default, I'd have to look here AND the setTreasure method.
+        // This method should be doing ONE thing, and that thing should be what it's called, so
+        // it should only be setting the bot value.  Think like:
+        // "This method should set the value of the bot"
+        // "To do that, we need to:
+        //      - create a random value for the x,y of the bot
+        //      - set the label in the gridPlane"
+        // So that's all this method should do.  Have another method to disable autoplay.
+
         if (Values.getTreasureSet())
         {
             autoplay.setDisable(false);
@@ -27,6 +39,12 @@ class ValueSetters
         // Matt Comment
         // If you know the position of the bot, why are you looping
         // through all the nodes to find it?
+        //
+        // EDIT: 1/6
+        // This is fucking stupid and another reason why I don't like java.
+        //  We have to go through the ENTIRE set to find a node where we already
+        // know it's position in the GridPlane?!  Ridiculous, I'm going to have
+        // to do more research on that because it actually frustrates me.
 
         // TODO
         // Joel Comment:

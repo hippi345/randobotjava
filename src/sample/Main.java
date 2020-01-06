@@ -21,6 +21,13 @@ public class Main extends Application {
     // Joel comment/question: do I need to move certain functions inside of the Point class
     // that are not yet done by the new refactoring?
     // What should the Point class accomplish in theory separate from the current org?
+    //
+    // Matt Response - 1/6
+    // Think of it more as a container for this information.  It's easier mentally for
+    // someone to look and be like "Okay, I know the position of the treasure is a point in
+    // space, since it's a Point object."  Writing clean code is more about making it easier
+    // for someone else to come in a read it, and have their ramp up in the logic and placement
+    // in everything be basically zero.  I wrote more about this in Values.java.
 
     // Matt Comment
     // Last, I'd write comments above each function as to what they do, just so it's easier for people
@@ -40,6 +47,9 @@ public class Main extends Application {
         // one is 0 args and one is more than 1 arg.  I'm also not sure why you're doing any
         // stage setting work if these are error conditions, it should just be like "error"
         // then bounce.
+        //
+        // EDIT: 1/6
+        // MUUUUCH better, so much cleaner just having this one != 1 piece.
 
         if (parameters.size() != 1)
         {
@@ -49,6 +59,12 @@ public class Main extends Application {
 
         // TODO
         // Joel comment: any thoughts on the below GUI setup?
+        // Matt Comment: 1/6
+        // I'd at least like to have it in a private method called like setupGUI().
+        // The book I'm reading was basically like "any time you have a branch in logic,
+        // inside that branch should be a method."  So like here, it would be like "If I don't
+        // have the right arguments, exit with an error, else, setup the gui."  Like at a high
+        // level, that's what this should do, so it makes sense to write it that way.
 
         else
         {

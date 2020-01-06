@@ -7,6 +7,11 @@ import javafx.scene.text.Text;
 
 import static sample.Values.*;
 
+// Matt Comment: 1/6
+// This feels like a misnomer, I feel like these are things the GAME is doing, not the
+// player.  Like yes, the player is the one pushing the button, but the game is the one
+// actually executing the logic of "what does it mean to execute the next play?" or
+// "What work do I need to do to reset?"
 class Player
 {
     // Matt Comment
