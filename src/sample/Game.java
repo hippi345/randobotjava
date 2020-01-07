@@ -5,10 +5,11 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
-import static sample.Values.*;
+import static sample.ValuesForGameRun.*;
 
 // Joel Response 1/7
 // Renamed the class to Game and the methods in this class to things more specific to what is occurring
+@SuppressWarnings("InfiniteLoopStatement")
 class Game
 {
     // Matt Comment
@@ -208,7 +209,7 @@ class Game
 
     // Joel Note 1/7
     // renamed to something more specific
-    static void resetTheGrid(Button bot, Button treasure, GridPane gridPane, int gridSize)
+    static void resetTheGrid(Button bot, Button treasure, GridPane gridPane)
     {
         bot.setDisable(false);
         treasure.setDisable(false);
@@ -216,27 +217,25 @@ class Game
         for (Node node : gridPane.getChildren()) {
             if (node instanceof Text)
             {
-                int xToSet = GridPane.getRowIndex(((Text) node));
-                int yToSet = GridPane.getColumnIndex((Text) node);
+                int xToSet = GridPane.getRowIndex(node);
+                int yToSet = GridPane.getColumnIndex(node);
                 ((Text) node).setText(yToSet + " " + xToSet + " " + "empty");
             }
         }
     }
 
+    // method call to run moveBotOnce until game is over with a System.Exit call
     static void autoPlayTheGame(int gridSize, GridPane gridPane)
     {
-        // TODO any thoughts on this one?
-        // want to avoid the while loop true if possible
-        while (true)
-        {
+        do {
             moveBotOnce(turnCount, gridSize, gridPane);
-        }
+        } while (true);
     }
 
     // checks for auto-play button to become enabled on both the treasure and the bot being set
     static void checkToSetAutoplay()
     {
-        if (Values.getTreasureSet() && Values.getBotSet())
+        if (ValuesForGameRun.getTreasureSet() && ValuesForGameRun.getBotSet())
         {
             Main.autoPlay.setDisable(false);
         }

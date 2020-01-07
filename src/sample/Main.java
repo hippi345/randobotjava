@@ -12,6 +12,7 @@ public class Main extends Application {
 
     // made this button static since it is accessed via Player for whether to enable auto-play or not
     static Button autoPlay = new Button("AutoPlay");
+    static int gridSize = 0;
 
     // this is the start method which sets up the GUI and elements within the grid pane object
     // it includes the buttons for actions, the labels for locations and objects (or lack thereof) which are there
@@ -56,7 +57,7 @@ public class Main extends Application {
             gridPane.setHgap(30);
             gridPane.setVgap(30);
             primaryStage.setTitle("Treasure Hunt");
-            int gridSize = Integer.parseInt(parameters.get(0));
+            gridSize = Integer.parseInt(parameters.get(0));
 
             // setup the labels based on the input
             setupGUILabelsFromInput(gridSize, gridPane);
@@ -70,7 +71,7 @@ public class Main extends Application {
         }
     }
 
-    // sets up the labels from the gridsize passed into the command line
+    // sets up the labels from the grid size passed into the command line
     private static void setupGUILabelsFromInput(int gridSize, GridPane gridPane)
     {
         for (int i = 0; i < gridSize; i++)
@@ -90,10 +91,10 @@ public class Main extends Application {
         Button nextPlay = new Button("Next move");
         Button reset = new Button("Reset");
 
-        setBot.setOnAction(event -> ValueSetters.setBot(gridSize, gridPane, setBot));
-        setTreasure.setOnAction(event -> ValueSetters.setTreasure(gridSize, gridPane, setTreasure));
-        nextPlay.setOnAction(event -> Game.moveBotOnce(Values.getTurnCount(), gridSize, gridPane));
-        reset.setOnAction(event -> Game.resetTheGrid(setBot, setTreasure, gridPane, gridSize));
+        setBot.setOnAction(event -> gameElementSetters.setBot(gridSize, gridPane, setBot));
+        setTreasure.setOnAction(event -> gameElementSetters.setTreasure(gridSize, gridPane, setTreasure));
+        nextPlay.setOnAction(event -> Game.moveBotOnce(ValuesForGameRun.getTurnCount(), gridSize, gridPane));
+        reset.setOnAction(event -> Game.resetTheGrid(setBot, setTreasure, gridPane));
         autoPlay.setOnAction(event -> Game.autoPlayTheGame(gridSize, gridPane));
 
         autoPlay.setDisable(true);
