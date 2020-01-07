@@ -7,64 +7,49 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import java.util.List;
-import java.util.logging.Logger;
-
-import static sample.Values.*;
 
 public class Main extends Application {
 
-    // Matt Comment
-    // Since x and y are things, you might be better to make them into a class called
-    // point or something, so that idea is abstracted up higher.
+    // made this button static since it is accessed via Player for whether to enable auto-play or not
+    static Button autoPlay = new Button("AutoPlay");
 
-    // TODO below comment
-    // Joel comment/question: do I need to move certain functions inside of the Point class
-    // that are not yet done by the new refactoring?
-    // What should the Point class accomplish in theory separate from the current org?
-    //
-    // Matt Response - 1/6
-    // Think of it more as a container for this information.  It's easier mentally for
-    // someone to look and be like "Okay, I know the position of the treasure is a point in
-    // space, since it's a Point object."  Writing clean code is more about making it easier
-    // for someone else to come in a read it, and have their ramp up in the logic and placement
-    // in everything be basically zero.  I wrote more about this in Values.java.
+    // this is the start method which sets up the GUI and elements within the grid pane object
+    // it includes the buttons for actions, the labels for locations and objects (or lack thereof) which are there
+    // Includes initial formatting of UI
+    // TODO base the size of the GUI off the estimated size of the grid (based on arg passed) and the static buttons
 
-    // Matt Comment
-    // Last, I'd write comments above each function as to what they do, just so it's easier for people
-    // to come in and be like "reset.. oh yeah okay it resets the game, yeah that makes sense"... looking
-    // now, reset could be resetting anything.. placement of something, turns.. no idea.
+    // Joel Note 1/7 this is a work item for to scale the GUI to the input arg so unless you want to point me in a
+    // direction for fun, this is something I am fully planning to research and implement on my side
+    // I am guessing you have to compute pixel sizes of elements (including gaps between them) and then pass
+    // that number into the "Scene" method
 
     @Override
     public void start(Stage primaryStage) throws Exception
     {
+        // bringing in the argument passed as this is not the main function
+        // so it does not have immediate access to the args
         final List<String> parameters = getParameters().getRaw();
         GridPane gridPane = new GridPane();
 
-        // Matt Comment
-        // This section is too long, and there's a lot of repeated code.  Try to break
-        // this out into functions somehow to make it easier to read.
-        // Like the first 2 are basically doing the same thing, just different because
-        // one is 0 args and one is more than 1 arg.  I'm also not sure why you're doing any
-        // stage setting work if these are error conditions, it should just be like "error"
-        // then bounce.
-        //
-        // EDIT: 1/6
-        // MUUUUCH better, so much cleaner just having this one != 1 piece.
+        // Joel Note 1/7: I added in the check for isDigit because I just realized someone
+        // could pass in a letter and fuck it all up big time so I got that cleared
+        // If you see any other possible things to do input validation for then let me know
 
-        if (parameters.size() != 1)
+        // Joel Note 1/7: also is there a more elegant way to end the program without System.Exit to your knowledge?
+
+        // errors out without GUI initialization if parameter is wrong
+        // performance is optimal this way since we are not wasting memory to spin up an
+        // unused GUI
+        if (parameters.size() != 1 || !Character.isDigit(parameters.get(0).toCharArray()[0]))
         {
             System.out.println("Invalid args: exiting...");
             System.exit(1);
         }
 
-        // TODO
-        // Joel comment: any thoughts on the below GUI setup?
-        // Matt Comment: 1/6
-        // I'd at least like to have it in a private method called like setupGUI().
-        // The book I'm reading was basically like "any time you have a branch in logic,
-        // inside that branch should be a method."  So like here, it would be like "If I don't
-        // have the right arguments, exit with an error, else, setup the gui."  Like at a high
-        // level, that's what this should do, so it makes sense to write it that way.
+        // Joel Note: cleaned up the implementation to make the flow make more sense and for
+        // one method (start) to not be doing everything
+        // I also think this may ("MAY") be more memory efficient as things are not sticking around forever
+        // some things go out of the memory stack/heap/pile/haystack after the methods exit
 
         else
         {
@@ -72,36 +57,51 @@ public class Main extends Application {
             gridPane.setVgap(30);
             primaryStage.setTitle("Treasure Hunt");
             int gridSize = Integer.parseInt(parameters.get(0));
-            for (int i = 0; i < gridSize; i++)
-            {
-                for (int j = 0; j < gridSize; j++)
-                {
-                    gridPane.add(new Text(i + " " + j + " empty"), i, j);
-                }
-            }
+
+            // setup the labels based on the input
+            setupGUILabelsFromInput(gridSize, gridPane);
+
             // setup the buttons
-            Button setBot = new Button("Place bot");
-            Button setTreasure = new Button("Place treasure");
-            Button nextPlay = new Button("Next move");
-            Button reset = new Button("Reset");
-            Button autoPlay = new Button("AutoPlay");
+            setupButtons(gridPane, gridSize);
 
-            setBot.setOnAction(event -> ValueSetters.setBot(gridSize, gridPane, setBot, autoPlay));
-            setTreasure.setOnAction(event -> ValueSetters.setTreasure(gridSize, gridPane, setTreasure, autoPlay));
-            nextPlay.setOnAction(event -> Player.nextPlay(Values.getTurnCount(), gridSize, gridPane));
-            reset.setOnAction(event -> Player.reset(setBot, setTreasure, gridPane, gridSize));
-            autoPlay.setOnAction(event -> Player.autoPlay(gridSize, gridPane));
-
-            autoPlay.setDisable(true);
-
-            gridPane.add(setBot,1, gridSize+1);
-            gridPane.add(setTreasure,1, gridSize+2);
-            gridPane.add(nextPlay,1, gridSize+3);
-            gridPane.add(reset,1, gridSize+4);
-            gridPane.add(autoPlay,1,gridSize+5);
-
+            // set the stage and start the show
             primaryStage.setScene(new Scene(gridPane, 450, 450));
             primaryStage.show();
         }
+    }
+
+    // sets up the labels from the gridsize passed into the command line
+    private static void setupGUILabelsFromInput(int gridSize, GridPane gridPane)
+    {
+        for (int i = 0; i < gridSize; i++)
+        {
+            for (int j = 0; j < gridSize; j++)
+            {
+                gridPane.add(new Text(i + " " + j + " empty"), i, j);
+            }
+        }
+    }
+
+    // sets up the buttons and adds them to the grid pane
+    private static void setupButtons(GridPane gridPane, int gridSize)
+    {
+        Button setBot = new Button("Place bot");
+        Button setTreasure = new Button("Place treasure");
+        Button nextPlay = new Button("Next move");
+        Button reset = new Button("Reset");
+
+        setBot.setOnAction(event -> ValueSetters.setBot(gridSize, gridPane, setBot));
+        setTreasure.setOnAction(event -> ValueSetters.setTreasure(gridSize, gridPane, setTreasure));
+        nextPlay.setOnAction(event -> Game.moveBotOnce(Values.getTurnCount(), gridSize, gridPane));
+        reset.setOnAction(event -> Game.resetTheGrid(setBot, setTreasure, gridPane, gridSize));
+        autoPlay.setOnAction(event -> Game.autoPlayTheGame(gridSize, gridPane));
+
+        autoPlay.setDisable(true);
+
+        gridPane.add(setBot,1, gridSize+1);
+        gridPane.add(setTreasure,1, gridSize+2);
+        gridPane.add(nextPlay,1, gridSize+3);
+        gridPane.add(reset,1, gridSize+4);
+        gridPane.add(autoPlay,1,gridSize+5);
     }
 }

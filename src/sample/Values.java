@@ -1,11 +1,17 @@
 package sample;
 
-// TODO
-// Joel comment: is this the right idea for a values class or could this be further cleaned up?
-// I did not know if Java has easy getter/setter like C# or if you aware of anything further that could be done
-// here from either a clean up or conceptual standpoint.
+// TODO implement this out
+// Matt Response - 1/6
+// Think of it more as a container for this information.  It's easier mentally for
+// someone to look and be like "Okay, I know the position of the treasure is a point in
+// space, since it's a Point object."  Writing clean code is more about making it easier
+// for someone else to come in a read it, and have their ramp up in the logic and placement
+// in everything be basically zero.  I wrote more about this in Values.java.
 
-import java.util.Random;
+// Joel Response: is this not being done in the Values class?
+// I don't have any mentions of the locations in the Main class at this point so perhaps
+// comment on where optimizations could be made in the Player, Values, and ValuesSetters classes
+// in reference to the Points class we are speaking about
 
 // Matt Comment:
 // So what I was thinking was something like this:
@@ -62,7 +68,7 @@ class Values
     static int treasureX;
     static int treasureY;
     static int turnCount = 0;
-    static boolean botSet = false;
+    private static boolean botSet = false;
     static boolean treasureSet = false;
 
     static void setBotX(int x)
@@ -99,4 +105,6 @@ class Values
     {
         return treasureSet;
     }
+
+    static boolean getBotSet() { return botSet; }
 }

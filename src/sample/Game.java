@@ -7,17 +7,18 @@ import javafx.scene.text.Text;
 
 import static sample.Values.*;
 
-// Matt Comment: 1/6
-// This feels like a misnomer, I feel like these are things the GAME is doing, not the
-// player.  Like yes, the player is the one pushing the button, but the game is the one
-// actually executing the logic of "what does it mean to execute the next play?" or
-// "What work do I need to do to reset?"
-class Player
+// Joel Response 1/7
+// Renamed the class to Game and the methods in this class to things more specific to what is occurring
+class Game
 {
     // Matt Comment
     // This is a mess and really hard to follow.  I'd suggest moving a lot of this out to different functions if possible.
     // Think about how to simplify the logic, and rethink naming of variables.
-    static void nextPlay(int turns, int gridSize, GridPane gridPane)
+
+    // Joel Response 1/7
+    // I am going to focus on refactoring this one out later tonight (1/7/2019) as it is a tall order
+    // but I wanted to push the things I have done thus far
+    static void moveBotOnce(int turns, int gridSize, GridPane gridPane)
     {
         // make next move
         turnCount++;
@@ -199,7 +200,15 @@ class Player
         }
     }
 
-    static void reset(Button bot, Button treasure, GridPane gridPane, int gridSize)
+    // resets the board by setting all the labels back to empty and enabling the set buttons again
+    // did a code review on this one to make sure it was not a mess and the only thing I could think of is
+    // potentially line 215 (or there abouts) ((Text) node).setText(yToSet + " " + xToSet + " " + "empty");
+    // is a little messy
+    // TODO see into how to clean up that line
+
+    // Joel Note 1/7
+    // renamed to something more specific
+    static void resetTheGrid(Button bot, Button treasure, GridPane gridPane, int gridSize)
     {
         bot.setDisable(false);
         treasure.setDisable(false);
@@ -214,11 +223,22 @@ class Player
         }
     }
 
-    static void autoPlay(int gridSize, GridPane gridPane)
+    static void autoPlayTheGame(int gridSize, GridPane gridPane)
     {
+        // TODO any thoughts on this one?
+        // want to avoid the while loop true if possible
         while (true)
         {
-            nextPlay(turnCount, gridSize, gridPane);
+            moveBotOnce(turnCount, gridSize, gridPane);
+        }
+    }
+
+    // checks for auto-play button to become enabled on both the treasure and the bot being set
+    static void checkToSetAutoplay()
+    {
+        if (Values.getTreasureSet() && Values.getBotSet())
+        {
+            Main.autoPlay.setDisable(false);
         }
     }
 }

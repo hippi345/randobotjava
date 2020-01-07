@@ -4,54 +4,38 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
-
 import static sample.Values.*;
-import static sample.Values.treasureY;
+
+// Joel Note 1/7
+/*
+    Cleaned this up a bit and modularized out the button enabling
+    Put that in the Player class as it seemed most fitting for a location
+    Also tried to make the code look cleaner so happy for feedback on that as well for this class
+ */
 
 class ValueSetters
 {
-    static void setBot(int gridSize, GridPane gridPane, Button setBot, Button autoplay)
+    static void setBot(int gridSize, GridPane gridPane, Button setBot)
     {
         setBot.setDisable(true);
         Values.setBotSet();
 
-        // Matt Comment - 1/6
-        // I feel like this method is trying to do too much.  If I'm trying to find a bug
-        // with autoplay setting to default, I'd have to look here AND the setTreasure method.
-        // This method should be doing ONE thing, and that thing should be what it's called, so
-        // it should only be setting the bot value.  Think like:
-        // "This method should set the value of the bot"
-        // "To do that, we need to:
-        //      - create a random value for the x,y of the bot
-        //      - set the label in the gridPlane"
-        // So that's all this method should do.  Have another method to disable autoplay.
+        // checks for whether to enable auto-play in the Player class for better modularization
+        Game.checkToSetAutoplay();
 
-        if (Values.getTreasureSet())
-        {
-            autoplay.setDisable(false);
-        }
         // place the bot
         Values.setBotX((int) Math.round(Math.random()*(gridSize-1)));
         Values.setBotY((int) Math.round(Math.random()*(gridSize-1)));
         System.out.println("Bot X: " + Values.getBotX());
         System.out.println("Bot Y: " + Values.getBotY());
 
-        // Matt Comment
-        // If you know the position of the bot, why are you looping
-        // through all the nodes to find it?
-        //
-        // EDIT: 1/6
-        // This is fucking stupid and another reason why I don't like java.
-        //  We have to go through the ENTIRE set to find a node where we already
-        // know it's position in the GridPlane?!  Ridiculous, I'm going to have
-        // to do more research on that because it actually frustrates me.
-
         // TODO
-        // Joel Comment:
-        // https://stackoverflow.com/questions/20825935/javafx-get-node-by-row-and-column
-        // this is what they suggested on Stackyflow
-        // I definitely wanted to just fetch it and assign it
-        // if you see something else more efficient then I curious for sure lol
+        // Research if alternative exists to parsing each node
+        // I don't think there is as I also found the same solution at
+        // https://stackoverflow.com/questions/57515339/javafx-how-to-locate-a-specific-button-in-a-gridpane
+        // there is a method GridPane.getChildren().get(int i) but it only works for a one dimensional index which
+        // is really really dumb that there is not an overload for 2D that would essentially use the getColumnIndex
+        // and getRowIndex in the background. smh...
 
         for (Node node : gridPane.getChildren()) {
             if (node instanceof Text
@@ -63,25 +47,29 @@ class ValueSetters
         }
     }
 
-    static void setTreasure(int gridSize, GridPane gridPane, Button setTreasure, Button autoplay)
+    static void setTreasure(int gridSize, GridPane gridPane, Button setTreasure)
     {
         treasureSet = true;
-        if (botSet)
-        {
-            autoplay.setDisable(false);
-        }
-        // place the treasure
+
+        // checks for auto-play to be enabled or not
+        Game.checkToSetAutoplay();
+        // disable the button on placement
         setTreasure.setDisable(true);
 
-        treasureNotBot(gridSize);
+        // this assigns values to treasure location but checks those against the bot location as we do not want them
+        // to be the same
+        // TODO there may a smarter way to do this. Thoughts?
+        // basically the while loop always makes me worry so open to alternatives
+
+        getTreasureCoordinates(gridSize);
         while ((treasureX == botX) && (treasureY == botY))
         {
-            treasureNotBot(gridSize);
+            getTreasureCoordinates(gridSize);
         }
         System.out.println("Treasure X: " + treasureX);
         System.out.println("Treasure Y: " + treasureY);
 
-        // set the appropriate label
+        // set the appropriate label for the treasure
         for (Node node : gridPane.getChildren()) {
             if (node instanceof Text
                     && (GridPane.getColumnIndex(node) == treasureX
@@ -92,7 +80,8 @@ class ValueSetters
         }
     }
 
-    private static void treasureNotBot(int gridSize)
+    // determines the location of the treasure
+    private static void getTreasureCoordinates(int gridSize)
     {
         treasureX = (int) Math.round(Math.random()*(gridSize-1));
         treasureY = (int) Math.round(Math.random()*(gridSize-1));
