@@ -7,11 +7,7 @@ import javafx.scene.text.Text;
 import sample.models.Bot;
 import sample.models.Treasure;
 
-// Joel Response 1/7
-// Renamed the class to Game and the methods in this class to things more specific to what is occurring
-
-// suppressed infinite loop warning since the warning is annoying to see but it never breaks anything
-@SuppressWarnings("InfiniteLoopStatement")
+// class for the game components
 class Game
 {
     private static int turnCount = 0;
@@ -19,13 +15,13 @@ class Game
     private Bot bot;
     private Treasure treasure;
 
-    public Game(int gridSize)
+    Game(int gridSize)
     {
         this.bot = new Bot(gridSize);
         this.treasure = new Treasure();
     }
 
-    public void InitializeGame(int gridSize, GridPane gridPane)
+    void InitializeGame(int gridSize, GridPane gridPane)
     {
         this.treasure.RandomizeLocation(gridSize);
 
@@ -49,8 +45,6 @@ class Game
 
         if(treasureIsFound())
             completeGame();
-        else
-            System.out.println("Treasure not found yet :-(");
 
         setTheLabelTexts(gridPane);
     }
@@ -69,6 +63,10 @@ class Game
     private void setTheLabelTexts(GridPane gridPane)
     {
         // TODO: these loops are choking out the game we have to figure out something better for this
+        // Joel Note: this was not the case prior to these pushes that are most recent
+        // It went through the turns very quickly prior
+        // Feel free to test perf on a prior push
+        // I actually thought there was an intentional wait made by you as it was running slow on my testing just now (1/8/2019)
 
         for (Node node : gridPane.getChildren()) {
             if(node instanceof Button) continue;
@@ -87,6 +85,11 @@ class Game
             }
             else
             {
+                assert node instanceof Text;
+                if (((Text) node).getText().equals(this.bot.getX() + " " + this.bot.getY() + " empty"))
+                {
+                    continue;
+                }
                 int y = GridPane.getRowIndex(node);
                 int x = GridPane.getColumnIndex(node);
                 ((Text) node).setText(x + " " + y + " empty");

@@ -9,24 +9,21 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import java.util.List;
 
+// Joel Note: its buggy now and will go past the boundaries so if you could fix that bug please
+// Also the performance was fine before even with the node iterations so I am not sure where it is lagging now
+
+// Ways to observe these bugs: you can do a manual play of the game and see the bot will hop through edge boundaries and this was not happening before
+// If you run a push prior to this refactoring, you will see there was no issue with time spent to execute autoplay or manual movements
+// As these exist now, I am having difficulty tracking down the source of why these bugs are occurring
+
 public class Main extends Application {
 
-    // Matt 1/7
-    // Does this still hold?
-    // made this button static since it is accessed via Player for whether to enable auto-play or not
-    static Button autoPlay = new Button("AutoPlay");
-    static int gridSize = 0;
     private Game game;
 
     // this is the start method which sets up the GUI and elements within the grid pane object
     // it includes the buttons for actions, the labels for locations and objects (or lack thereof) which are there
     // Includes initial formatting of UI
     // TODO base the size of the GUI off the estimated size of the grid (based on arg passed) and the static buttons
-
-    // Joel Note 1/7 this is a work item for to scale the GUI to the input arg so unless you want to point me in a
-    // direction for fun, this is something I am fully planning to research and implement on my side
-    // I am guessing you have to compute pixel sizes of elements (including gaps between them) and then pass
-    // that number into the "Scene" method
 
     @Override
     public void start(Stage primaryStage)
@@ -43,7 +40,7 @@ public class Main extends Application {
         gridPane.setHgap(30);
         gridPane.setVgap(30);
         primaryStage.setTitle("Treasure Hunt");
-        gridSize = Integer.parseInt(parameters.get(0));
+        int gridSize = Integer.parseInt(parameters.get(0));
 
         // setup the labels based on the input
         setupGUILabelsFromInput(gridSize, gridPane);
@@ -76,16 +73,11 @@ public class Main extends Application {
         // four main buttons
         Button nextPlay = new Button("Next move");
         Button reset = new Button("Reset");
+        Button autoPlay = new Button("AutoPlay");
 
-        // actions on clicks for buttons
-
-        // Matt 1/7
-        // Do we really need a set bot and set treasure button?  Can't we do that when
-        // the game starts instead, that way we insure that it's always set too and we don't have
-        // to worry about disabling a button or anything.
         nextPlay.setOnAction(event -> this.game.moveBot(gridPane));
         reset.setOnAction(event -> resetGame(gridPane, gridSize));
-        autoPlay.setOnAction(event -> RunAutoplay(gridPane, gridSize));
+        autoPlay.setOnAction(event -> RunAutoplay(gridPane));
 
         // adding the buttons to the grid pane
         gridPane.add(nextPlay,1, gridSize + 1);
@@ -93,15 +85,16 @@ public class Main extends Application {
         gridPane.add(autoPlay,1,gridSize + 3);
     }
 
+    // input validation method
     private boolean inputsAreValid(List<String> inputParameters)
     {
         return inputParameters.size() == 1 && Character.isDigit(inputParameters.get(0).toCharArray()[0]);
     }
 
-    private void RunAutoplay(GridPane gridPane, int gridSize)
+    // run moveBot continually with the warning on infinite loops suppressed
+    @SuppressWarnings("InfiniteLoopStatement")
+    private void RunAutoplay(GridPane gridPane)
     {
-        resetGame(gridPane, gridSize);
-
         while(true)
         {
             this.game.moveBot(gridPane);
@@ -109,11 +102,10 @@ public class Main extends Application {
     }
 
     // clear the board when reset is clicked
+    // Joel Note: for some reason this was not right and it was clearing the labels after initializing the game
+    // fixed
     private void resetGame(GridPane gridPane, int gridSize)
     {
-        this.game = new Game(gridSize);
-        this.game.InitializeGame(gridSize, gridPane);
-
         for (Node node : gridPane.getChildren()) {
             if (node instanceof Text)
             {
@@ -122,6 +114,9 @@ public class Main extends Application {
                 ((Text) node).setText(xToSet + " " + yToSet + " " + "empty");
             }
         }
+
+        this.game = new Game(gridSize);
+        this.game.InitializeGame(gridSize, gridPane);
     }
 
     private void prepareGame(int gridSize, GridPane gridPane)

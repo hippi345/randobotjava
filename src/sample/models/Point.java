@@ -4,10 +4,10 @@ import java.util.Random;
 
 public class Point
 {
-    protected int x;
-    protected int y;
+    int x;
+    int y;
 
-    public Point()
+    Point()
     {
         this.x = this.y = 0;
     }

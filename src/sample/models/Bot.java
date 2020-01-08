@@ -4,12 +4,14 @@ import sample.interfaces.IMovablePoint;
 
 import java.util.Random;
 
-public class Bot extends Point implements IMovablePoint {
-    private int movementBound;
-    public Bot(int movementBound)
+public class Bot extends Point implements IMovablePoint
+{
+    // renamed to boundary as bound seemed vague
+    private int movementBoundary;
+    public Bot(int movementBoundary)
     {
         super();
-        this.movementBound = movementBound;
+        this.movementBoundary = movementBoundary;
     }
 
     // Interface method
@@ -28,6 +30,8 @@ public class Bot extends Point implements IMovablePoint {
             // nextInt returns a value between 0 (inclusive) and n (EXCLUSIVE)
             // https://www.tutorialspoint.com/java/util/random_nextint_inc_exc.htm
             int moveNumber = randomNumberGenerator.nextInt(4);
+
+            // realized hasMoved is to get us out of the while loop. lit.
             boolean hasMoved = false;
 
             switch (moveNumber)
@@ -42,16 +46,16 @@ public class Bot extends Point implements IMovablePoint {
                     break;
 
                 case 1 :
-                    if(this.x != this.movementBound - 1)
+                    if(this.x != this.movementBoundary - 1)
                     {
                         ++this.x;
-                        hasMoved = true;
+                        // hasMoved = true;
                     }
 
                     break;
 
                 case 2 :
-                    if(this.y != this.movementBound - 1)
+                    if(this.y != this.movementBoundary - 1)
                     {
                         ++this.y;
                         hasMoved = true;
@@ -63,7 +67,7 @@ public class Bot extends Point implements IMovablePoint {
                     if(this.x != 0)
                     {
                         --this.x;
-                        hasMoved = true;
+                        // hasMoved = true;
                     }
 
                     break;
