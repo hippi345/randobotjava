@@ -25,7 +25,7 @@ public class Main extends Application {
     // that number into the "Scene" method
 
     @Override
-    public void start(Stage primaryStage) throws Exception
+    public void start(Stage primaryStage)
     {
         // bringing in the argument passed as this is not the main function
         // so it does not have immediate access to the args
@@ -86,19 +86,23 @@ public class Main extends Application {
     // sets up the buttons and adds them to the grid pane
     private static void setupButtons(GridPane gridPane, int gridSize)
     {
+        // four main buttons
         Button setBot = new Button("Place bot");
         Button setTreasure = new Button("Place treasure");
         Button nextPlay = new Button("Next move");
         Button reset = new Button("Reset");
 
+        // actions on clicks for buttons
         setBot.setOnAction(event -> gameElementSetters.setBot(gridSize, gridPane, setBot));
         setTreasure.setOnAction(event -> gameElementSetters.setTreasure(gridSize, gridPane, setTreasure));
-        nextPlay.setOnAction(event -> Game.moveBotOnce(ValuesForGameRun.getTurnCount(), gridSize, gridPane));
+        nextPlay.setOnAction(event -> Game.moveBotOnce(gridSize, gridPane));
         reset.setOnAction(event -> Game.resetTheGrid(setBot, setTreasure, gridPane));
         autoPlay.setOnAction(event -> Game.autoPlayTheGame(gridSize, gridPane));
 
+        // disabling the autoplay on startup
         autoPlay.setDisable(true);
 
+        // adding the buttons to the grid pane
         gridPane.add(setBot,1, gridSize+1);
         gridPane.add(setTreasure,1, gridSize+2);
         gridPane.add(nextPlay,1, gridSize+3);

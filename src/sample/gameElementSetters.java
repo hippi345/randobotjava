@@ -65,7 +65,7 @@ class gameElementSetters
 
         // make use of the Point class to abstract away the point calculation
         Point treasurePoint = Point.WithRandomValues(gridSize);
-        while ((treasurePoint.getX() == botPoint.getX()) && (treasurePoint.getY() == botPoint.getY()))
+        while (treasurePoint.getX() == botPoint.getX() && (treasurePoint.getY() == botPoint.getY()))
         {
             treasurePoint = Point.WithRandomValues(gridSize);
         }

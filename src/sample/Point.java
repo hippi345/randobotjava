@@ -27,11 +27,13 @@ class Point
          return new Point(x, y);
      }
 
-     int getX() {
+     int getX()
+     {
          return x;
      }
 
-     int getY() {
+     int getY()
+     {
          return y;
      }
 }

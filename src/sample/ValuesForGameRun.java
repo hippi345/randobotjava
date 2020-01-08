@@ -7,8 +7,10 @@ class ValuesForGameRun
     static int botY;
     static int treasureX;
     static int treasureY;
+
     // turn count for auto-play and in Main where we make the buttons
     static int turnCount = 0;
+
     // values for whether the bot is set or the treasure is set
     // the values for these are set in the setters class for game components but used in the Game class
     // for determining whether to use auto-play or not
@@ -34,11 +36,6 @@ class ValuesForGameRun
     static int getBotY()
     {
         return botY;
-    }
-
-    static int getTurnCount()
-    {
-        return turnCount;
     }
 
     static void botIsSet()
