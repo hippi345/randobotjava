@@ -75,8 +75,8 @@ public class Main extends Application {
         Button reset = new Button("Reset");
         Button autoPlay = new Button("AutoPlay");
 
-        nextPlay.setOnAction(event -> this.game.moveBot(gridPane));
-        reset.setOnAction(event -> resetGame(gridPane, gridSize));
+        nextPlay.setOnAction(event -> this.game.executeMove(gridPane));
+        reset.setOnAction(event -> prepareGame(gridSize, gridPane));
         autoPlay.setOnAction(event -> RunAutoplay(gridPane));
 
         // adding the buttons to the grid pane
@@ -95,29 +95,18 @@ public class Main extends Application {
     @SuppressWarnings("InfiniteLoopStatement")
     private void RunAutoplay(GridPane gridPane)
     {
+        // The game calls exit by itself, we might want to refactor to be able to play multiple games in 1 session.
         while(true)
         {
-            this.game.moveBot(gridPane);
+            this.game.executeMove(gridPane);
         }
     }
 
     // clear the board when reset is clicked
     // Joel Note: for some reason this was not right and it was clearing the labels after initializing the game
     // fixed
-    private void resetGame(GridPane gridPane, int gridSize)
-    {
-        for (Node node : gridPane.getChildren()) {
-            if (node instanceof Text)
-            {
-                int xToSet = GridPane.getColumnIndex(node);
-                int yToSet = GridPane.getRowIndex(node);
-                ((Text) node).setText(xToSet + " " + yToSet + " " + "empty");
-            }
-        }
-
-        this.game = new Game(gridSize);
-        this.game.InitializeGame(gridSize, gridPane);
-    }
+    // There's a method in the game to set the label text, which I think we need to be refactored out into something
+    // else.  We should really be in like an MVC approach, like the game shouldn't really care about the presentation.
 
     private void prepareGame(int gridSize, GridPane gridPane)
     {

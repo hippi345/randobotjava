@@ -2,6 +2,8 @@ package sample.models;
 
 import sample.interfaces.IMovablePoint;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Bot extends Point implements IMovablePoint
@@ -15,65 +17,48 @@ public class Bot extends Point implements IMovablePoint
     }
 
     // Interface method
+    // For now, we're only moving randomly.  We might extend this in the future to
+    // move in a more intelligent way.
     public void Move()
     {
-        // Here we're going to denote a move like this:
-        //      0 is a move up
-        //      1 is a move to the right
-        //      2 is a move down
-        //      3 is a move to the left
+        this.MoveRandomly();
+    }
 
-        while(true)
+    private void MoveRandomly()
+    {
+        // Changed this logic, a loop seems stupid now that I reflect.  We can automatically capture
+        // what moves are possible based on where we currently stand, and from there we can add them
+        // to a list.  Then we can randomly pick from the list, and execute that move.
+        ArrayList<MoveEnum> possibleMoves = new ArrayList<MoveEnum>();
+
+        // Determine which moves are possible, then add them to the list
+        if(this.y != 0) possibleMoves.add(MoveEnum.Up);
+        if(this.x != this.movementBoundary - 1) possibleMoves.add(MoveEnum.Right);
+        if(this.y != this.movementBoundary - 1) possibleMoves.add(MoveEnum.Down);
+        if(this.x != 0) possibleMoves.add(MoveEnum.Left);
+
+        Random randomNumberGenerator = new Random(System.currentTimeMillis());
+
+        // nextInt returns a value between 0 (inclusive) and n (EXCLUSIVE)
+        // https://www.tutorialspoint.com/java/util/random_nextint_inc_exc.htm
+        int randomMovementNumber = randomNumberGenerator.nextInt(possibleMoves.size());
+
+        MoveEnum chosenMove = possibleMoves.get(randomMovementNumber);
+
+        switch (chosenMove)
         {
-            Random randomNumberGenerator = new Random(System.currentTimeMillis());
-
-            // nextInt returns a value between 0 (inclusive) and n (EXCLUSIVE)
-            // https://www.tutorialspoint.com/java/util/random_nextint_inc_exc.htm
-            int moveNumber = randomNumberGenerator.nextInt(4);
-
-            // realized hasMoved is to get us out of the while loop. lit.
-            boolean hasMoved = false;
-
-            switch (moveNumber)
-            {
-                case 0 :
-                    if(this.y != 0)
-                    {
-                        --this.y;
-                        hasMoved = true;
-                    }
-
-                    break;
-
-                case 1 :
-                    if(this.x != this.movementBoundary - 1)
-                    {
-                        ++this.x;
-                        // hasMoved = true;
-                    }
-
-                    break;
-
-                case 2 :
-                    if(this.y != this.movementBoundary - 1)
-                    {
-                        ++this.y;
-                        hasMoved = true;
-                    }
-
-                    break;
-
-                case 3 :
-                    if(this.x != 0)
-                    {
-                        --this.x;
-                        // hasMoved = true;
-                    }
-
-                    break;
-            }
-
-            if(hasMoved) break;
+            case Up:
+                --this.y;
+                break;
+            case Right:
+                ++this.x;
+                break;
+            case Down:
+                ++this.y;
+                break;
+            case Left:
+                --this.x;
+                break;
         }
     }
 }

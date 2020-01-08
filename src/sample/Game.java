@@ -35,7 +35,7 @@ class Game
         setTheLabelTexts(gridPane);
     }
 
-    void moveBot(GridPane gridPane)
+    void executeMove(GridPane gridPane)
     {
         // make next move
         ++turnCount;
