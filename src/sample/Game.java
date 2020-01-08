@@ -15,11 +15,6 @@ import sample.models.Treasure;
 class Game
 {
     private static int turnCount = 0;
-    // Joel comment 1/7/2019
-    // Let me know your thoughts on whether this is easier to follow
-
-    // Matt 1/7
-    // Nitpick, but do we need to have Once in the title of this method?  You can just call it moveBot
 
     private Bot bot;
     private Treasure treasure;
@@ -44,46 +39,37 @@ class Game
         setTheLabelTexts(gridPane);
     }
 
-    void moveBot(int gridSize, GridPane gridPane)
+    void moveBot(GridPane gridPane)
     {
         // make next move
-        turnCount++;
+        ++turnCount;
         System.out.println("Current turn: " + turnCount);
-
-        // Matt Comment
-        // These variable names are confusing, and it isn't giving me a good idea of what they're
-        // actually supposed to do.
-
-        // Joel Response 1/7
-        // I created a Move class for movement decisions and values and I think it clears up a lot of cloud here
-        // I also moved the repetitive code into common methods which are named in a very common sense way
-        // Let me know your thoughts
-
-        // implementing the Move class to make the determination of the direction to move
-        // much less contrived
 
         this.bot.Move();
 
-        didWeFindTheTreasure();
+        if(treasureIsFound())
+            completeGame();
+        else
+            System.out.println("Treasure not found yet :-(");
 
         setTheLabelTexts(gridPane);
     }
 
-    private void didWeFindTheTreasure()
+    private void completeGame()
     {
-        if (this.bot.getX() == this.treasure.getX() && this.bot.getY() == this.treasure.getY())
-        {
-            System.out.println("you found the treasure!");
-            System.exit(69);
-        }
-        else
-            System.out.println("Treasure not found yet :-(");
+        System.out.println("you found the treasure!");
+        System.exit(69);
+    }
+
+    private boolean treasureIsFound()
+    {
+        return this.bot.getX() == this.treasure.getX() && this.bot.getY() == this.treasure.getY();
     }
 
     private void setTheLabelTexts(GridPane gridPane)
-    // if we don't find it then
-    // changing the label on the new bot location
     {
+        // TODO: these loops are choking out the game we have to figure out something better for this
+
         for (Node node : gridPane.getChildren()) {
             if(node instanceof Button) continue;
 
@@ -103,7 +89,7 @@ class Game
             {
                 int y = GridPane.getRowIndex(node);
                 int x = GridPane.getColumnIndex(node);
-                ((Text) node).setText(x + " " + y + "empty");
+                ((Text) node).setText(x + " " + y + " empty");
             }
         }
     }

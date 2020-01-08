@@ -12,6 +12,7 @@ public class Bot extends Point implements IMovablePoint {
         this.movementBound = movementBound;
     }
 
+    // Interface method
     public void Move()
     {
         // Here we're going to denote a move like this:

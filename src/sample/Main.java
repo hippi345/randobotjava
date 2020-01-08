@@ -31,44 +31,15 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage)
     {
-        // bringing in the argument passed as this is not the main function
-        // so it does not have immediate access to the args
         final List<String> parameters = getParameters().getRaw();
         GridPane gridPane = new GridPane();
 
-        // Joel Note 1/7: I added in the check for isDigit because I just realized someone
-        // could pass in a letter and fuck it all up big time so I got that cleared
-        // If you see any other possible things to do input validation for then let me know
-
-        // Joel Note 1/7: also is there a more elegant way to end the program without System.Exit to your knowledge?
-
-        // errors out without GUI initialization if parameter is wrong
-        // performance is optimal this way since we are not wasting memory to spin up an
-        // unused GUI
-
-        // Matt 1/7
-        // I'd even move this to a function.  Do something like
-        // if(!argsAreValid(parameters)
-        // {
-        //      System.out.println("Invalid args: exiting...");
-        //      System.exit(1);
-        // }
-        // That way it can be contained, and if you have more arguments in the future, you can just add to
-        // that argsAreValid function, and not add to the complexity of this part of the code.
         if (!inputsAreValid(parameters))
         {
             System.out.println("Invalid args: exiting...");
             System.exit(1);
         }
 
-        // Joel Note: cleaned up the implementation to make the flow make more sense and for
-        // one method (start) to not be doing everything
-        // I also think this may ("MAY") be more memory efficient as things are not sticking around forever
-        // some things go out of the memory stack/heap/pile/haystack after the methods exit
-
-        // Matt 1/7
-        // Else isn't needed here, you can just remove it.  It won't flow down to this code if the above
-        // if statement is true.
         gridPane.setHgap(30);
         gridPane.setVgap(30);
         primaryStage.setTitle("Treasure Hunt");
@@ -112,12 +83,9 @@ public class Main extends Application {
         // Do we really need a set bot and set treasure button?  Can't we do that when
         // the game starts instead, that way we insure that it's always set too and we don't have
         // to worry about disabling a button or anything.
-        nextPlay.setOnAction(event -> this.game.moveBot(gridSize, gridPane));
+        nextPlay.setOnAction(event -> this.game.moveBot(gridPane));
         reset.setOnAction(event -> resetGame(gridPane, gridSize));
-        autoPlay.setOnAction(event -> RunAutoplay(gridSize, gridPane));
-
-        // disabling the autoplay on startup
-        autoPlay.setDisable(true);
+        autoPlay.setOnAction(event -> RunAutoplay(gridPane, gridSize));
 
         // adding the buttons to the grid pane
         gridPane.add(nextPlay,1, gridSize + 1);
@@ -130,11 +98,13 @@ public class Main extends Application {
         return inputParameters.size() == 1 && Character.isDigit(inputParameters.get(0).toCharArray()[0]);
     }
 
-    private void RunAutoplay(int gridSize, GridPane gridPane)
+    private void RunAutoplay(GridPane gridPane, int gridSize)
     {
+        resetGame(gridPane, gridSize);
+
         while(true)
         {
-            this.game.moveBot(gridSize, gridPane);
+            this.game.moveBot(gridPane);
         }
     }
 
@@ -147,9 +117,9 @@ public class Main extends Application {
         for (Node node : gridPane.getChildren()) {
             if (node instanceof Text)
             {
-                int xToSet = GridPane.getRowIndex(node);
-                int yToSet = GridPane.getColumnIndex(node);
-                ((Text) node).setText(yToSet + " " + xToSet + " " + "empty");
+                int xToSet = GridPane.getColumnIndex(node);
+                int yToSet = GridPane.getRowIndex(node);
+                ((Text) node).setText(xToSet + " " + yToSet + " " + "empty");
             }
         }
     }
