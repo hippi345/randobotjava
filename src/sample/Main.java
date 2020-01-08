@@ -1,6 +1,7 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
@@ -10,9 +11,12 @@ import java.util.List;
 
 public class Main extends Application {
 
+    // Matt 1/7
+    // Does this still hold?
     // made this button static since it is accessed via Player for whether to enable auto-play or not
     static Button autoPlay = new Button("AutoPlay");
     static int gridSize = 0;
+    private Game game;
 
     // this is the start method which sets up the GUI and elements within the grid pane object
     // it includes the buttons for actions, the labels for locations and objects (or lack thereof) which are there
@@ -41,7 +45,17 @@ public class Main extends Application {
         // errors out without GUI initialization if parameter is wrong
         // performance is optimal this way since we are not wasting memory to spin up an
         // unused GUI
-        if (parameters.size() != 1 || !Character.isDigit(parameters.get(0).toCharArray()[0]))
+
+        // Matt 1/7
+        // I'd even move this to a function.  Do something like
+        // if(!argsAreValid(parameters)
+        // {
+        //      System.out.println("Invalid args: exiting...");
+        //      System.exit(1);
+        // }
+        // That way it can be contained, and if you have more arguments in the future, you can just add to
+        // that argsAreValid function, and not add to the complexity of this part of the code.
+        if (!inputsAreValid(parameters))
         {
             System.out.println("Invalid args: exiting...");
             System.exit(1);
@@ -52,23 +66,25 @@ public class Main extends Application {
         // I also think this may ("MAY") be more memory efficient as things are not sticking around forever
         // some things go out of the memory stack/heap/pile/haystack after the methods exit
 
-        else
-        {
-            gridPane.setHgap(30);
-            gridPane.setVgap(30);
-            primaryStage.setTitle("Treasure Hunt");
-            gridSize = Integer.parseInt(parameters.get(0));
+        // Matt 1/7
+        // Else isn't needed here, you can just remove it.  It won't flow down to this code if the above
+        // if statement is true.
+        gridPane.setHgap(30);
+        gridPane.setVgap(30);
+        primaryStage.setTitle("Treasure Hunt");
+        gridSize = Integer.parseInt(parameters.get(0));
 
-            // setup the labels based on the input
-            setupGUILabelsFromInput(gridSize, gridPane);
+        // setup the labels based on the input
+        setupGUILabelsFromInput(gridSize, gridPane);
 
-            // setup the buttons
-            setupButtons(gridPane, gridSize);
+        prepareGame(gridSize, gridPane);
 
-            // set the stage and start the show
-            primaryStage.setScene(new Scene(gridPane, 450, 450));
-            primaryStage.show();
-        }
+        // setup the buttons
+        setupButtons(gridPane, gridSize);
+
+        // set the stage and start the show
+        primaryStage.setScene(new Scene(gridPane, 450, 450));
+        primaryStage.show();
     }
 
     // sets up the labels from the grid size passed into the command line
@@ -84,29 +100,63 @@ public class Main extends Application {
     }
 
     // sets up the buttons and adds them to the grid pane
-    private static void setupButtons(GridPane gridPane, int gridSize)
+    private void setupButtons(GridPane gridPane, int gridSize)
     {
         // four main buttons
-        Button setBot = new Button("Place bot");
-        Button setTreasure = new Button("Place treasure");
         Button nextPlay = new Button("Next move");
         Button reset = new Button("Reset");
 
         // actions on clicks for buttons
-        setBot.setOnAction(event -> gameElementSetters.setBot(gridSize, gridPane, setBot));
-        setTreasure.setOnAction(event -> gameElementSetters.setTreasure(gridSize, gridPane, setTreasure));
-        nextPlay.setOnAction(event -> Game.moveBotOnce(gridSize, gridPane));
-        reset.setOnAction(event -> Game.resetTheGrid(setBot, setTreasure, gridPane));
-        autoPlay.setOnAction(event -> Game.autoPlayTheGame(gridSize, gridPane));
+
+        // Matt 1/7
+        // Do we really need a set bot and set treasure button?  Can't we do that when
+        // the game starts instead, that way we insure that it's always set too and we don't have
+        // to worry about disabling a button or anything.
+        nextPlay.setOnAction(event -> this.game.moveBot(gridSize, gridPane));
+        reset.setOnAction(event -> resetGame(gridPane, gridSize));
+        autoPlay.setOnAction(event -> RunAutoplay(gridSize, gridPane));
 
         // disabling the autoplay on startup
         autoPlay.setDisable(true);
 
         // adding the buttons to the grid pane
-        gridPane.add(setBot,1, gridSize+1);
-        gridPane.add(setTreasure,1, gridSize+2);
-        gridPane.add(nextPlay,1, gridSize+3);
-        gridPane.add(reset,1, gridSize+4);
-        gridPane.add(autoPlay,1,gridSize+5);
+        gridPane.add(nextPlay,1, gridSize + 1);
+        gridPane.add(reset,1, gridSize + 2);
+        gridPane.add(autoPlay,1,gridSize + 3);
+    }
+
+    private boolean inputsAreValid(List<String> inputParameters)
+    {
+        return inputParameters.size() == 1 && Character.isDigit(inputParameters.get(0).toCharArray()[0]);
+    }
+
+    private void RunAutoplay(int gridSize, GridPane gridPane)
+    {
+        while(true)
+        {
+            this.game.moveBot(gridSize, gridPane);
+        }
+    }
+
+    // clear the board when reset is clicked
+    private void resetGame(GridPane gridPane, int gridSize)
+    {
+        this.game = new Game(gridSize);
+        this.game.InitializeGame(gridSize, gridPane);
+
+        for (Node node : gridPane.getChildren()) {
+            if (node instanceof Text)
+            {
+                int xToSet = GridPane.getRowIndex(node);
+                int yToSet = GridPane.getColumnIndex(node);
+                ((Text) node).setText(yToSet + " " + xToSet + " " + "empty");
+            }
+        }
+    }
+
+    private void prepareGame(int gridSize, GridPane gridPane)
+    {
+        this.game = new Game(gridSize);
+        this.game.InitializeGame(gridSize, gridPane);
     }
 }
