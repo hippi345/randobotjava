@@ -1,118 +1,76 @@
 package sample;
 
 import javafx.application.Application;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
 import java.util.List;
-
-// Joel Note: its buggy now and will go past the boundaries so if you could fix that bug please
-// Also the performance was fine before even with the node iterations so I am not sure where it is lagging now
-
-// Ways to observe these bugs: you can do a manual play of the game and see the bot will hop through edge boundaries and this was not happening before
-// If you run a push prior to this refactoring, you will see there was no issue with time spent to execute autoplay or manual movements
-// As these exist now, I am having difficulty tracking down the source of why these bugs are occurring
 
 public class Main extends Application {
 
-    private Game game;
-
-    // this is the start method which sets up the GUI and elements within the grid pane object
-    // it includes the buttons for actions, the labels for locations and objects (or lack thereof) which are there
-    // Includes initial formatting of UI
-    // TODO base the size of the GUI off the estimated size of the grid (based on arg passed) and the static buttons
-
     @Override
-    public void start(Stage primaryStage)
-    {
+    public void start(Stage primaryStage) throws InterruptedException {
         final List<String> parameters = getParameters().getRaw();
-        GridPane gridPane = new GridPane();
-
         if (!inputsAreValid(parameters))
         {
             System.out.println("Invalid args: exiting...");
             System.exit(1);
         }
 
-        gridPane.setHgap(30);
-        gridPane.setVgap(30);
-        primaryStage.setTitle("Treasure Hunt");
         int gridSize = Integer.parseInt(parameters.get(0));
+        View gameView = new View();
+
+        Game mainGame = prepareGame(gridSize, gameView.gridPane, gameView);
+        // establishes the actual View for the game which is managed in the View class
+
+        gameView.setupTheGridPane(gameView, gridSize, mainGame.bot, mainGame.treasure, mainGame);
 
         // setup the labels based on the input
-        setupGUILabelsFromInput(gridSize, gridPane);
-
-        prepareGame(gridSize, gridPane);
-
-        // setup the buttons
-        setupButtons(gridPane, gridSize);
+        gameView.setupGUILabelsFromInput(gridSize, gameView.gridPane);
 
         // set the stage and start the show
-        primaryStage.setScene(new Scene(gridPane, 450, 450));
+        // this is where we scale based on number of args
+
+        // size based on arg algorithm
+        double size = (13.0 * Math.pow(gridSize,2)) + 50;
+
+        primaryStage.setTitle("Treasure Hunt");
+        primaryStage.setScene(new Scene(gameView.gridPane, size, size));
         primaryStage.show();
-    }
-
-    // sets up the labels from the grid size passed into the command line
-    private static void setupGUILabelsFromInput(int gridSize, GridPane gridPane)
-    {
-        for (int i = 0; i < gridSize; i++)
-        {
-            for (int j = 0; j < gridSize; j++)
-            {
-                gridPane.add(new Text(i + " " + j + " empty"), i, j);
-            }
-        }
-    }
-
-    // sets up the buttons and adds them to the grid pane
-    private void setupButtons(GridPane gridPane, int gridSize)
-    {
-        // four main buttons
-        Button nextPlay = new Button("Next move");
-        Button reset = new Button("Reset");
-        Button autoPlay = new Button("AutoPlay");
-
-        nextPlay.setOnAction(event -> this.game.executeMove(gridPane));
-        reset.setOnAction(event -> prepareGame(gridSize, gridPane));
-        autoPlay.setOnAction(event -> RunAutoplay(gridPane));
-
-        // adding the buttons to the grid pane
-        gridPane.add(nextPlay,1, gridSize + 1);
-        gridPane.add(reset,1, gridSize + 2);
-        gridPane.add(autoPlay,1,gridSize + 3);
     }
 
     // input validation method
     private boolean inputsAreValid(List<String> inputParameters)
     {
-        return inputParameters.size() == 1 && Character.isDigit(inputParameters.get(0).toCharArray()[0]);
+        // added current supported max size on my machine
+        if (Integer.parseInt(inputParameters.get(0)) > 16)
+        {
+            System.out.println("Chill out cowboy, we only support 16 as the max grid size right now.");
+        }
+        return inputParameters.size() == 1 && Character.isDigit(inputParameters.get(0).toCharArray()[0])
+                && Integer.parseInt(inputParameters.get(0)) <= 16;
     }
 
     // run moveBot continually with the warning on infinite loops suppressed
     @SuppressWarnings("InfiniteLoopStatement")
-    private void RunAutoplay(GridPane gridPane)
-    {
+    static void RunAutoPlay(Game game, GridPane gridPane, View gameView) throws InterruptedException {
         // The game calls exit by itself, we might want to refactor to be able to play multiple games in 1 session.
-        // I'd also really like to see this autoplay update the UX as well, but we should separate out into a
+        // I'd also really like to see this auto-play update the UX as well, but we should separate out into a
         // ViewModel and a View and have the view update on a separate thread.
+
+        // Joel Note: 1/9 - I am also seeing auto-play does not update the UI and I was trying to figure out to do that
+        // Happy to do it but I did not know if you had any thoughts?
         while(true)
         {
-            this.game.executeMove(gridPane);
+            game.executeMove(gridPane, gameView);
         }
     }
 
-    // clear the board when reset is clicked
-    // Joel Note: for some reason this was not right and it was clearing the labels after initializing the game
-    // fixed
-    // There's a method in the game to set the label text, which I think we need to be refactored out into something
-    // else.  We should really be in like an MVC approach, like the game shouldn't really care about the presentation.
-
-    private void prepareGame(int gridSize, GridPane gridPane)
-    {
-        this.game = new Game(gridSize);
-        this.game.InitializeGame(gridSize, gridPane);
+    // sets up the Game object with bot and treasure objects in place with coordinates on the grid
+    static Game prepareGame(int gridSize, GridPane gridPane, View gameView) throws InterruptedException {
+        Game game = new Game(gridSize);
+        game.InitializeGame(gridSize, gridPane, gameView);
+        return game;
     }
 }

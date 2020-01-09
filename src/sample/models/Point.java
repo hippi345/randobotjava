@@ -9,7 +9,7 @@ public class Point
 
     Point()
     {
-        this.x = this.y = 0;
+        x = y = 0;
     }
 
      public Point(int x, int y)
@@ -21,17 +21,17 @@ public class Point
      public void RandomizeLocation(int bound)
      {
          Random random = new Random(System.currentTimeMillis());
-         this.x = random.nextInt(bound);
-         this.y = random.nextInt(bound);
+         x = random.nextInt(bound);
+         y = random.nextInt(bound);
      }
 
      public int getX()
      {
-         return x;
+         return this.x;
      }
 
      public int getY()
      {
-         return y;
+         return this.y;
      }
 }

@@ -3,12 +3,11 @@ package sample.models;
 import sample.interfaces.IMovablePoint;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class Bot extends Point implements IMovablePoint
 {
-    // renamed to boundary as bound seemed vague
+
     private int movementBoundary;
     public Bot(int movementBoundary)
     {
@@ -21,7 +20,7 @@ public class Bot extends Point implements IMovablePoint
     // move in a more intelligent way.
     public void Move()
     {
-        this.MoveRandomly();
+        MoveRandomly();
     }
 
     private void MoveRandomly()
