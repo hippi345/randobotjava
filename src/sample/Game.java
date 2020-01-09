@@ -7,31 +7,32 @@ import sample.models.Treasure;
 // class for the game components
 class Game
 {
-    private static int turnCount = 0;
+    private int turnCount = 0;
 
     Bot bot;
     Treasure treasure;
 
-    Game(int gridSize)
+    Game()
     {
-        this.bot = new Bot(gridSize);
+        this.bot = new Bot(View.getInstance().gridSize);
         this.treasure = new Treasure();
     }
 
-    void InitializeGame(int gridSize, GridPane gridPane, View gameView) throws InterruptedException {
-        this.treasure.RandomizeLocation(gridSize);
+    void InitializeGame() {
+        View view = View.getInstance();
+        this.treasure.RandomizeLocation(view.gridSize);
 
-        this.bot.RandomizeLocation(gridSize);
+        this.bot.RandomizeLocation(view.gridSize);
 
         while(this.bot.getX() == this.treasure.getX() && this.bot.getY() == this.treasure.getY())
         {
-            this.bot.RandomizeLocation(gridSize);
+            this.bot.RandomizeLocation(view.gridSize);
         }
 
-        gameView.setTheLabelTexts(gridPane, this.bot, this.treasure);
+        view.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 
-    void executeMove(GridPane gridPane, View gameView) throws InterruptedException {
+    void executeMove() {
         // make next move
         ++turnCount;
         System.out.println("Current turn: " + turnCount);
@@ -41,7 +42,7 @@ class Game
         if(treasureIsFound())
             completeGame();
 
-        gameView.setTheLabelTexts(gridPane, this.bot, this.treasure);
+        View.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 
     private static void completeGame()

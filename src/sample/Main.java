@@ -8,9 +8,10 @@ import javafx.stage.Stage;
 import java.util.List;
 
 public class Main extends Application {
+    Game game;
 
     @Override
-    public void start(Stage primaryStage) throws InterruptedException {
+    public void start(Stage primaryStage) {
         final List<String> parameters = getParameters().getRaw();
         if (!inputsAreValid(parameters))
         {
@@ -19,15 +20,14 @@ public class Main extends Application {
         }
 
         int gridSize = Integer.parseInt(parameters.get(0));
-        View gameView = new View();
 
-        Game mainGame = prepareGame(gridSize, gameView.gridPane, gameView);
+        View gameView = View.getInstance();
+        gameView.setGridSize(gridSize);
+
+        prepareGame();
+
         // establishes the actual View for the game which is managed in the View class
-
-        gameView.setupTheGridPane(gameView, gridSize, mainGame.bot, mainGame.treasure, mainGame);
-
-        // setup the labels based on the input
-        gameView.setupGUILabelsFromInput(gridSize, gameView.gridPane);
+        setupView(gameView);
 
         // set the stage and start the show
         // this is where we scale based on number of args
@@ -52,25 +52,42 @@ public class Main extends Application {
                 && Integer.parseInt(inputParameters.get(0)) <= 16;
     }
 
+    private void setupView(View gameView)
+    {
+        gameView.setupTheGridPane();
+        
+        // This took a long time to figure out, but I knew the pattern I wanted when
+        // I started and I don't give up so easily lol.  We do this in .NET a lot,
+        // so I had to kind of hack a way to pass the functions I wanted to execute.
+        gameView.setupButtons(
+                (o) -> this.game.executeMove(),
+                (o) -> prepareGame(),
+                (o) -> RunAutoPlay());
+
+        gameView.adjustBotAndTreasureLocations(this.game.bot, this.game.treasure);
+    }
+
     // run moveBot continually with the warning on infinite loops suppressed
     @SuppressWarnings("InfiniteLoopStatement")
-    static void RunAutoPlay(Game game, GridPane gridPane, View gameView) throws InterruptedException {
+    void RunAutoPlay() {
         // The game calls exit by itself, we might want to refactor to be able to play multiple games in 1 session.
         // I'd also really like to see this auto-play update the UX as well, but we should separate out into a
         // ViewModel and a View and have the view update on a separate thread.
 
         // Joel Note: 1/9 - I am also seeing auto-play does not update the UI and I was trying to figure out to do that
         // Happy to do it but I did not know if you had any thoughts?
+        //
+        // Matt 1/9 - They're both running on the same thread, we need to figure out how we can have a separate UI thread
+        // so that when we run the logic, it isn't blocking the UI thread.  That's basically what's happening now.
         while(true)
         {
-            game.executeMove(gridPane, gameView);
+            this.game.executeMove();
         }
     }
 
     // sets up the Game object with bot and treasure objects in place with coordinates on the grid
-    static Game prepareGame(int gridSize, GridPane gridPane, View gameView) throws InterruptedException {
-        Game game = new Game(gridSize);
-        game.InitializeGame(gridSize, gridPane, gameView);
-        return game;
+    void prepareGame() {
+        this.game = new Game();
+        this.game.InitializeGame();
     }
 }

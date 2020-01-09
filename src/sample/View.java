@@ -5,38 +5,62 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import sample.models.Bot;
+import sample.models.Point;
 import sample.models.Treasure;
+
+import java.lang.reflect.Method;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 class View
 {
-    GridPane gridPane;
+    private static View instance = null;
+    public GridPane gridPane;
+    public int gridSize = Constants.DEFAULT_GRIDSIZE;
 
-    View()
+    // Constructor must be private for the Singleton pattern.
+    private View()
     {
         this.gridPane = new GridPane();
+
     }
 
-    void setupTheGridPane(View view, int gridPaneSize, Bot bot, Treasure treasure, Game game) throws InterruptedException {
+    public static View getInstance()
+    {
+        if(instance == null)
+        {
+            instance = new View();
+        }
+
+        return instance;
+    }
+
+    public void setGridSize(int gridSize)
+    {
+        this.gridSize = gridSize;
+    }
+
+    void setupTheGridPane() {
         this.gridPane.setHgap(8);
         this.gridPane.setVgap(8);
-        setupGUILabelsFromInput(gridPaneSize, this.gridPane);
-        setTheLabelTexts(this.gridPane, bot, treasure);
-        setupButtons(game, this.gridPane, gridPaneSize, view);
+        setupGUI();
     }
 
     // sets up the labels from the grid size passed into the command line
-    void setupGUILabelsFromInput(int gridSize, GridPane gridPane)
+    void setupGUI()
     {
-        for (int i = 0; i < gridSize; i++)
+        for (int i = 0; i < this.gridSize; i++)
         {
-            for (int j = 0; j < gridSize; j++)
+            for (int j = 0; j < this.gridSize; j++)
             {
-                gridPane.add(new Text(""),i,j);
+                this.gridPane.add(new Text(""), i, j);
             }
         }
     }
 
-    void setTheLabelTexts(GridPane gridPane, Bot bot, Treasure treasure) throws InterruptedException {
+    void adjustBotAndTreasureLocations(Point bot, Point treasure) {
         for (Node node : gridPane.getChildren()) {
             int currentColumnIndex = GridPane.getColumnIndex(node);
             int currentRowIndex = GridPane.getRowIndex(node);
@@ -65,34 +89,18 @@ class View
     }
 
     // sets up the buttons and adds them to the grid pane
-    private void setupButtons(Game game, GridPane gridPane, int gridSize, View gameView)
+    // The 3 consumers sent to this method should NOT TAKE AN INPUT.  We had to put the object to get around being
+    // forced to send something to the method.
+    void setupButtons(Consumer<Object> nextFunction, Consumer<Object> resetFunction, Consumer<Object> autoPlayFunction)
     {
         // four main buttons
         Button nextPlay = new Button("Next move");
         Button reset = new Button("Reset");
         Button autoPlay = new Button("AutoPlay");
 
-        nextPlay.setOnAction(event -> {
-            try {
-                game.executeMove(gridPane, gameView);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-        reset.setOnAction(event -> {
-            try {
-                Main.prepareGame(gridSize, gridPane, gameView);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-        autoPlay.setOnAction(event -> {
-            try {
-                Main.RunAutoPlay(game, gridPane, gameView);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+        nextPlay.setOnAction(actionEvent -> nextFunction.accept(null));
+        reset.setOnAction(actionEvent -> resetFunction.accept(null));
+        autoPlay.setOnAction(actionEvent -> autoPlayFunction.accept(null));
 
         // adding the buttons to the grid pane
         gridPane.add(nextPlay,1, gridSize + 1);
