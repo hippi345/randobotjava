@@ -62,37 +62,24 @@ class Game
 
     private void setTheLabelTexts(GridPane gridPane)
     {
-        // TODO: these loops are choking out the game we have to figure out something better for this
-        // Joel Note: this was not the case prior to these pushes that are most recent
-        // It went through the turns very quickly prior
-        // Feel free to test perf on a prior push
-        // I actually thought there was an intentional wait made by you as it was running slow on my testing just now (1/8/2019)
-
         for (Node node : gridPane.getChildren()) {
-            if(node instanceof Button) continue;
+            int currentColumnIndex = GridPane.getColumnIndex(node);
+            int currentRowIndex = GridPane.getRowIndex(node);
 
-            if (node instanceof Text
-                    && (GridPane.getColumnIndex(node) == this.bot.getX()
-                    && GridPane.getRowIndex(node) == this.bot.getY()))
+            if(node instanceof Text)
             {
-                ((Text) node).setText(this.bot.getX() + " " + this.bot.getY() + " " + " bot");
-            }
-            else if (node instanceof Text
-                    && (GridPane.getColumnIndex(node) == this.treasure.getX()
-                    && GridPane.getRowIndex(node) == this.treasure.getY()))
-            {
-                ((Text) node).setText(this.treasure.getX() + " " + this.treasure.getY() + " " + " treasure");
-            }
-            else
-            {
-                assert node instanceof Text;
-                if (((Text) node).getText().equals(this.bot.getX() + " " + this.bot.getY() + " empty"))
+                if(this.bot.getX() == currentColumnIndex && this.bot.getY() == currentRowIndex)
                 {
-                    continue;
+                    ((Text) node).setText(this.bot.getX() + " " + this.bot.getY() + " " + " bot");
                 }
-                int y = GridPane.getRowIndex(node);
-                int x = GridPane.getColumnIndex(node);
-                ((Text) node).setText(x + " " + y + " empty");
+                else if(this.treasure.getX() == currentColumnIndex && this.treasure.getY() == currentRowIndex)
+                {
+                    ((Text) node).setText(this.treasure.getX() + " " + this.treasure.getY() + " " + " treasure");
+                }
+                else
+                {
+                    ((Text) node).setText(currentColumnIndex + " " + currentRowIndex + " empty");
+                }
             }
         }
     }

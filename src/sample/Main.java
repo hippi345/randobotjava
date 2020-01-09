@@ -96,6 +96,8 @@ public class Main extends Application {
     private void RunAutoplay(GridPane gridPane)
     {
         // The game calls exit by itself, we might want to refactor to be able to play multiple games in 1 session.
+        // I'd also really like to see this autoplay update the UX as well, but we should separate out into a
+        // ViewModel and a View and have the view update on a separate thread.
         while(true)
         {
             this.game.executeMove(gridPane);
