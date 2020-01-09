@@ -68,18 +68,22 @@ class Game
 
             if(node instanceof Text)
             {
+                String textToSet = "";
+
                 if(this.bot.getX() == currentColumnIndex && this.bot.getY() == currentRowIndex)
                 {
-                    ((Text) node).setText(this.bot.getX() + " " + this.bot.getY() + " " + " bot");
+                    textToSet = this.bot.getX() + " " + this.bot.getY() + " " + " bot";
                 }
                 else if(this.treasure.getX() == currentColumnIndex && this.treasure.getY() == currentRowIndex)
                 {
-                    ((Text) node).setText(this.treasure.getX() + " " + this.treasure.getY() + " " + " treasure");
+                    textToSet = this.treasure.getX() + " " + this.treasure.getY() + " " + " treasure";
                 }
                 else
                 {
-                    ((Text) node).setText(currentColumnIndex + " " + currentRowIndex + " empty");
+                    textToSet = currentColumnIndex + " " + currentRowIndex + " empty";
                 }
+
+                ((Text) node).setText(textToSet);
             }
         }
     }
