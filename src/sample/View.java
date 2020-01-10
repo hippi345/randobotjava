@@ -90,6 +90,8 @@ public class View
         Button reset = new Button("Reset");
         Button autoPlay = new Button("AutoPlay");
 
+        // so we have a button for each cardinal movement and then those would go to
+        // functions in the Game class *moving over to there*
         nextPlay.setOnAction(actionEvent -> nextFunction.accept(null));
         reset.setOnAction(actionEvent -> resetFunction.accept(null));
         autoPlay.setOnAction(actionEvent -> autoPlayFunction.accept(null));

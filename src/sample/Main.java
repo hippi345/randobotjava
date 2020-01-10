@@ -64,7 +64,15 @@ public class Main extends Application {
     private void setupView(View gameView)
     {
         gameView.setupTheGridPane();
-        
+
+        // Joel Note - 1/10
+        // I am guessing the first place to put a new button for manual play and the resulting uplr buttons
+        // for movement would be here
+        // We could have movements initially disabled until the user selects manual play OR we could have no
+        // 'manual play' button and just disable autoplay on hitting one of the movement buttons
+        // OR we could have autoplay pick up where the user currently is in the manual play and thus we don't have to
+        // add anything but the buttons for movement but then we would definitely disable those on hitting autoplay
+
         // This took a long time to figure out, but I knew the pattern I wanted when
         // I started and I don't give up so easily lol.  We do this in .NET a lot,
         // so I had to kind of hack a way to pass the functions I wanted to execute.

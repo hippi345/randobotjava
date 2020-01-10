@@ -18,6 +18,13 @@ public class Bot extends Point implements IMovablePoint
     // Interface method
     // For now, we're only moving randomly.  We might extend this in the future to
     // move in a more intelligent way.
+
+    // here its easy to add a new type of manual movement in the same type of design except the direction depends on
+    // button pressed and we could use an ENUM or something like moveRandomly to do manual movements
+    // So "nextMove" would call moveRandomly along autoplay
+    // but the cardinals would call a "moveControlled" or something like that
+    // we would move moveRandomly out of the constructor and maybe setup input args which select which one to do?
+    
     public void Move()
     {
         MoveRandomly();

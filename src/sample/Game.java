@@ -59,6 +59,7 @@ class Game
             view.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
         });*/
 
+        // then this goes to the bot class where we currently only have one type of movement
         this.bot.Move();
         if(treasureIsFound())
             completeGame();
