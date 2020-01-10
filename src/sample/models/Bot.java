@@ -15,6 +15,11 @@ public class Bot extends Point implements IMovablePoint
         this.movementBoundary = movementBoundary;
     }
 
+    public void Move()
+    {
+
+    }
+
     // Interface method
     // For now, we're only moving randomly.  We might extend this in the future to
     // move in a more intelligent way.
@@ -24,18 +29,41 @@ public class Bot extends Point implements IMovablePoint
     // So "nextMove" would call moveRandomly along autoplay
     // but the cardinals would call a "moveControlled" or something like that
     // we would move moveRandomly out of the constructor and maybe setup input args which select which one to do?
-    
-    public void Move()
+
+    public void Move(MoveEnum direction)
     {
-        MoveRandomly();
+        ArrayList<MoveEnum> possibleMoves = new ArrayList<>();
+
+        // Determine which moves are possible, then add them to the list
+        if(this.y != 0) possibleMoves.add(MoveEnum.Up);
+        if(this.x != this.movementBoundary - 1) possibleMoves.add(MoveEnum.Right);
+        if(this.y != this.movementBoundary - 1) possibleMoves.add(MoveEnum.Down);
+        if(this.x != 0) possibleMoves.add(MoveEnum.Left);
+
+        if (possibleMoves.contains(direction))
+        {
+            switch (direction)
+            {
+                case Up:
+                    --this.y;
+                    break;
+                case Right:
+                    ++this.x;
+                    break;
+                case Down:
+                    ++this.y;
+                    break;
+                case Left:
+                    --this.x;
+                    break;
+            }
+        }
     }
 
-    private void MoveRandomly()
+    public void MoveRandomly()
     {
-        // Changed this logic, a loop seems stupid now that I reflect.  We can automatically capture
-        // what moves are possible based on where we currently stand, and from there we can add them
-        // to a list.  Then we can randomly pick from the list, and execute that move.
-        ArrayList<MoveEnum> possibleMoves = new ArrayList<MoveEnum>();
+
+        ArrayList<MoveEnum> possibleMoves = new ArrayList<>();
 
         // Determine which moves are possible, then add them to the list
         if(this.y != 0) possibleMoves.add(MoveEnum.Up);

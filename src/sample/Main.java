@@ -38,12 +38,10 @@ public class Main extends Application {
         // establishes the actual View for the game which is managed in the View class
         setupView(gameView);
 
-        // set the stage and start the show
-        // this is where we scale based on number of args
-
         // size based on arg algorithm
         double size = (13.0 * Math.pow(gridSize,2)) + 50;
 
+        // set the stage and start the show
         primaryStage.setTitle("Treasure Hunt");
         primaryStage.setScene(new Scene(gameView.gridPane, size, size));
         primaryStage.show();
@@ -73,13 +71,15 @@ public class Main extends Application {
         // OR we could have autoplay pick up where the user currently is in the manual play and thus we don't have to
         // add anything but the buttons for movement but then we would definitely disable those on hitting autoplay
 
-        // This took a long time to figure out, but I knew the pattern I wanted when
-        // I started and I don't give up so easily lol.  We do this in .NET a lot,
-        // so I had to kind of hack a way to pass the functions I wanted to execute.
+        // Never seen that before lmao but I like it and I want to implement it for the new buttons
         gameView.setupButtons(
-                (o) -> this.game.executeMove(),
+                (o) -> this.game.executeAutoMove(),
                 (o) -> prepareGame(),
-                (o) -> RunAutoPlay());
+                (o) -> RunAutoPlay(),
+                (o) -> this.game.moveUp(),
+                (o) -> this.game.moveDown(),
+                (o) -> this.game.moveLeft(),
+                (o) -> this.game.moveRight());
 
         gameView.adjustBotAndTreasureLocations(this.game.bot, this.game.treasure);
     }
@@ -92,7 +92,7 @@ public class Main extends Application {
         // so that when we run the logic, it isn't blocking the UI thread.  That's basically what's happening now.
         while(true)
         {
-            this.game.executeMove();
+            this.game.executeAutoMove();
         }
     }
 

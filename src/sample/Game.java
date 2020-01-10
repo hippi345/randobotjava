@@ -2,6 +2,7 @@ package sample;
 
 import javafx.concurrent.Task;
 import sample.models.Bot;
+import sample.models.MoveEnum;
 import sample.models.Treasure;
 
 // class for the game components
@@ -35,7 +36,7 @@ class Game
         view.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 
-    void executeMove() {
+    void executeAutoMove() {
         // make next move
         ++turnCount;
         System.out.println("Current turn: " + turnCount);
@@ -59,10 +60,9 @@ class Game
             view.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
         });*/
 
-        // then this goes to the bot class where we currently only have one type of movement
-        this.bot.Move();
-        if(treasureIsFound())
-            completeGame();
+        this.bot.MoveRandomly();
+            if(treasureIsFound())
+                completeGame();
 
         View.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
@@ -88,4 +88,44 @@ class Game
             return null;
         }
     };
+
+    void moveUp()
+    {
+        this.bot.Move(MoveEnum.Up);
+
+        if(treasureIsFound())
+            completeGame();
+
+        View.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
+    }
+
+    void moveDown()
+    {
+        this.bot.Move(MoveEnum.Down);
+
+        if(treasureIsFound())
+            completeGame();
+
+        View.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
+    }
+
+    void moveLeft()
+    {
+        this.bot.Move(MoveEnum.Left);
+
+        if(treasureIsFound())
+            completeGame();
+
+        View.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
+    }
+
+    void moveRight()
+    {
+        this.bot.Move(MoveEnum.Right);
+
+        if(treasureIsFound())
+            completeGame();
+
+        View.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
+    }
 }
