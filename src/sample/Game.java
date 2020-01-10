@@ -1,14 +1,16 @@
 package sample;
 
-import javafx.scene.layout.GridPane;
 import sample.models.Bot;
+import sample.models.GUIThread;
 import sample.models.Treasure;
+import sample.models.moveBotThread;
 
 // class for the game components
 class Game
 {
     private int turnCount = 0;
 
+    View view = View.getInstance();
     Bot bot;
     Treasure treasure;
 
@@ -37,8 +39,16 @@ class Game
         ++turnCount;
         System.out.println("Current turn: " + turnCount);
 
-        this.bot.Move();
+        // Joel comment 12/9 - I don't know threads well but I tried but it was not working.
+        // Did not break anything though
 
+        /*Thread botThread = new moveBotThread(this.bot);
+        botThread.start();
+
+        Thread guiThread = new GUIThread(this.bot, this.treasure, view);
+        guiThread.start();*/
+
+        this.bot.Move();
         if(treasureIsFound())
             completeGame();
 

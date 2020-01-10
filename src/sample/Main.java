@@ -2,17 +2,26 @@ package sample;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main extends Application {
-    Game game;
+    private Game game;
+    // implements your default size if no arg is provided and makes a 5x5 grid
+    private final ArrayList<String> parameters = new ArrayList<String>();
 
     @Override
     public void start(Stage primaryStage) {
-        final List<String> parameters = getParameters().getRaw();
+        try {
+            parameters.add(getParameters().getRaw().get(0));
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+            parameters.add(String.valueOf(Constants.DEFAULT_GRIDSIZE));
+        }
+
         if (!inputsAreValid(parameters))
         {
             System.out.println("Invalid args: exiting...");
@@ -69,14 +78,8 @@ public class Main extends Application {
 
     // run moveBot continually with the warning on infinite loops suppressed
     @SuppressWarnings("InfiniteLoopStatement")
-    void RunAutoPlay() {
-        // The game calls exit by itself, we might want to refactor to be able to play multiple games in 1 session.
-        // I'd also really like to see this auto-play update the UX as well, but we should separate out into a
-        // ViewModel and a View and have the view update on a separate thread.
+    private void RunAutoPlay() {
 
-        // Joel Note: 1/9 - I am also seeing auto-play does not update the UI and I was trying to figure out to do that
-        // Happy to do it but I did not know if you had any thoughts?
-        //
         // Matt 1/9 - They're both running on the same thread, we need to figure out how we can have a separate UI thread
         // so that when we run the logic, it isn't blocking the UI thread.  That's basically what's happening now.
         while(true)
@@ -86,7 +89,7 @@ public class Main extends Application {
     }
 
     // sets up the Game object with bot and treasure objects in place with coordinates on the grid
-    void prepareGame() {
+    private void prepareGame() {
         this.game = new Game();
         this.game.InitializeGame();
     }

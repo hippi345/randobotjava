@@ -4,21 +4,14 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
-import sample.models.Bot;
 import sample.models.Point;
-import sample.models.Treasure;
-
-import java.lang.reflect.Method;
-import java.util.concurrent.Callable;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
-class View
+public class View
 {
     private static View instance = null;
-    public GridPane gridPane;
-    public int gridSize = Constants.DEFAULT_GRIDSIZE;
+    GridPane gridPane;
+    int gridSize = Constants.DEFAULT_GRIDSIZE;
 
     // Constructor must be private for the Singleton pattern.
     private View()
@@ -37,7 +30,7 @@ class View
         return instance;
     }
 
-    public void setGridSize(int gridSize)
+    void setGridSize(int gridSize)
     {
         this.gridSize = gridSize;
     }
@@ -49,7 +42,7 @@ class View
     }
 
     // sets up the labels from the grid size passed into the command line
-    void setupGUI()
+    private void setupGUI()
     {
         for (int i = 0; i < this.gridSize; i++)
         {
@@ -60,7 +53,7 @@ class View
         }
     }
 
-    void adjustBotAndTreasureLocations(Point bot, Point treasure) {
+    public void adjustBotAndTreasureLocations(Point bot, Point treasure) {
         for (Node node : gridPane.getChildren()) {
             int currentColumnIndex = GridPane.getColumnIndex(node);
             int currentRowIndex = GridPane.getRowIndex(node);
@@ -85,7 +78,6 @@ class View
                 ((Text) node).setText(textToSet);
             }
         }
-        // added sleep so the UI can catch up with the moves
     }
 
     // sets up the buttons and adds them to the grid pane
