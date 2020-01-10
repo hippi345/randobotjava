@@ -11,6 +11,6 @@ public class moveBotThread extends Thread
 
     public void start()
     {
-        bot.Move();
+        bot.MoveRandomly();
     }
 }

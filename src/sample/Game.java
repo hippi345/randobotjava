@@ -12,7 +12,6 @@ class Game
 
     private int turnCount = 0;
 
-    View view = View.getInstance();
     Bot bot;
     Treasure treasure;
 
@@ -67,12 +66,14 @@ class Game
         View.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 
+    // actions on completion of the game
     private static void completeGame()
     {
         System.out.println("you found the treasure!");
         System.exit(69);
     }
 
+    // condition checking for whether the bot is on the treasure location
     private boolean treasureIsFound()
     {
         return this.bot.getX() == this.treasure.getX() && this.bot.getY() == this.treasure.getY();
@@ -82,7 +83,7 @@ class Game
         @Override
         protected Void call()
         {
-            threadBot.Move();
+            threadBot.MoveRandomly();
             if(treasureIsFound())
                 completeGame();
             return null;

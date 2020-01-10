@@ -13,8 +13,10 @@ public class Main extends Application {
     private final ArrayList<String> parameters = new ArrayList<String>();
 
     @Override
-    public void start(Stage primaryStage) {
-        try {
+    public void start(Stage primaryStage)
+    {
+        try
+        {
             parameters.add(getParameters().getRaw().get(0));
         }
         catch (IndexOutOfBoundsException e)
@@ -33,6 +35,7 @@ public class Main extends Application {
         View gameView = View.getInstance();
         gameView.setGridSize(gridSize);
 
+        // preparation of the game components for movement and treasure hunting
         prepareGame();
 
         // establishes the actual View for the game which is managed in the View class
@@ -61,17 +64,10 @@ public class Main extends Application {
 
     private void setupView(View gameView)
     {
+        // creation of the grid pane
         gameView.setupTheGridPane();
 
-        // Joel Note - 1/10
-        // I am guessing the first place to put a new button for manual play and the resulting uplr buttons
-        // for movement would be here
-        // We could have movements initially disabled until the user selects manual play OR we could have no
-        // 'manual play' button and just disable autoplay on hitting one of the movement buttons
-        // OR we could have autoplay pick up where the user currently is in the manual play and thus we don't have to
-        // add anything but the buttons for movement but then we would definitely disable those on hitting autoplay
-
-        // Never seen that before lmao but I like it and I want to implement it for the new buttons
+        // setting up the buttons which go into the UI
         gameView.setupButtons(
                 (o) -> this.game.executeAutoMove(),
                 (o) -> prepareGame(),
