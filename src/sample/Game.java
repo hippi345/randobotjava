@@ -1,13 +1,14 @@
 package sample;
 
+import javafx.concurrent.Task;
 import sample.models.Bot;
-import sample.models.GUIThread;
 import sample.models.Treasure;
-import sample.models.moveBotThread;
 
 // class for the game components
 class Game
 {
+    private Bot threadBot;
+
     private int turnCount = 0;
 
     View view = View.getInstance();
@@ -38,6 +39,7 @@ class Game
         // make next move
         ++turnCount;
         System.out.println("Current turn: " + turnCount);
+        threadBot = this.bot;
 
         // Joel comment 12/9 - I don't know threads well but I tried but it was not working.
         // Did not break anything though
@@ -47,6 +49,15 @@ class Game
 
         Thread guiThread = new GUIThread(this.bot, this.treasure, view);
         guiThread.start();*/
+
+        /*Thread movementThread = new Thread(moveTask);
+        movementThread.setDaemon(true);
+        movementThread.start();
+
+        moveTask.setOnSucceeded(e ->
+        {
+            view.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
+        });*/
 
         this.bot.Move();
         if(treasureIsFound())
@@ -65,4 +76,15 @@ class Game
     {
         return this.bot.getX() == this.treasure.getX() && this.bot.getY() == this.treasure.getY();
     }
+
+    private Task<Void> moveTask = new Task<>() {
+        @Override
+        protected Void call()
+        {
+            threadBot.Move();
+            if(treasureIsFound())
+                completeGame();
+            return null;
+        }
+    };
 }
