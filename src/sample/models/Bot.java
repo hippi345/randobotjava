@@ -63,5 +63,6 @@ public class Bot extends Point implements IMovablePoint
                 --this.x;
                 break;
         }
+        possibleMoves.clear();
     }
 }
