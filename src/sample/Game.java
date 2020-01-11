@@ -1,6 +1,5 @@
 package sample;
 
-import javafx.concurrent.Task;
 import sample.models.Bot;
 import sample.models.MoveEnum;
 import sample.models.Treasure;
@@ -8,29 +7,44 @@ import sample.models.Treasure;
 // class for the game components
 class Game
 {
-    private Bot threadBot;
 
     private int turnCount = 0;
 
     Bot bot;
     Treasure treasure;
 
-    Game()
+
+    Game(int gridSizePassed)
     {
-        this.bot = new Bot(View.getInstance().gridSize);
+        this.bot = new Bot(gridSizePassed);
         this.treasure = new Treasure();
     }
 
-    void InitializeGame() {
+    void InitializeGame(View gameView)
+    {
+        this.treasure.RandomizeLocation(gameView.gridSize);
+
+        this.bot.RandomizeLocation(gameView.gridSize);
+
+        while(this.bot.getX() == this.treasure.getX() && this.bot.getY() == this.treasure.getY())
+        {
+            this.bot.RandomizeLocation(gameView.gridSize);
+        }
+
+        gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
+    }
+
+    void InitializeGame()
+    {
         View view = View.getInstance();
         this.treasure.RandomizeLocation(view.gridSize);
 
         this.bot.RandomizeLocation(view.gridSize);
 
         while(this.bot.getX() == this.treasure.getX() && this.bot.getY() == this.treasure.getY())
-        {
-            this.bot.RandomizeLocation(view.gridSize);
-        }
+            {
+                this.bot.RandomizeLocation(view.gridSize);
+            }
 
         view.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
@@ -39,7 +53,7 @@ class Game
         // make next move
         ++turnCount;
         System.out.println("Current turn: " + turnCount);
-        threadBot = this.bot;
+        Bot threadBot = this.bot;
 
         // Joel comment 12/9 - I don't know threads well but I tried but it was not working.
         // Did not break anything though
@@ -79,7 +93,7 @@ class Game
         return this.bot.getX() == this.treasure.getX() && this.bot.getY() == this.treasure.getY();
     }
 
-    private Task<Void> moveTask = new Task<>() {
+    /*private Task<Void> moveTask = new Task<>() {
         @Override
         protected Void call()
         {
@@ -88,7 +102,7 @@ class Game
                 completeGame();
             return null;
         }
-    };
+    };*/
 
     void moveUp()
     {
@@ -97,7 +111,7 @@ class Game
         if(treasureIsFound())
             completeGame();
 
-        View.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
+        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 
     void moveDown()
@@ -107,7 +121,7 @@ class Game
         if(treasureIsFound())
             completeGame();
 
-        View.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
+        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 
     void moveLeft()
@@ -117,7 +131,7 @@ class Game
         if(treasureIsFound())
             completeGame();
 
-        View.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
+        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 
     void moveRight()
@@ -127,6 +141,6 @@ class Game
         if(treasureIsFound())
             completeGame();
 
-        View.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
+        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 }

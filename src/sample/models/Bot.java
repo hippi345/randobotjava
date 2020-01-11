@@ -46,7 +46,7 @@ public class Bot extends Point implements IMovablePoint
         if(this.x != 0) possibleMoves.add(MoveEnum.Left);
     }
 
-    public void moveTheBot(MoveEnum direction)
+    private void moveTheBot(MoveEnum direction)
     {
         switch (direction)
         {

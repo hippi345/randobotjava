@@ -1,9 +1,16 @@
 package sample;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 import sample.models.Point;
 import java.util.function.Consumer;
 
@@ -14,13 +21,18 @@ public class View
     int gridSize = Constants.DEFAULT_GRIDSIZE;
 
     // Constructor must be private for the Singleton pattern.
-    private View()
+    View()
     {
         this.gridPane = new GridPane();
-
     }
 
-    public static View getInstance()
+    View(int gridSize)
+    {
+        this.gridPane = new GridPane();
+        this.gridSize = gridSize;
+    }
+
+    static View getInstance()
     {
         if(instance == null)
         {
@@ -30,7 +42,7 @@ public class View
         return instance;
     }
 
-    void setGridSize(int gridSize)
+    private void setGridSize(int gridSize)
     {
         this.gridSize = gridSize;
     }
@@ -52,6 +64,103 @@ public class View
             }
         }
     }
+
+    // setting up the start screen
+    void startScreen(Stage startGUI)
+    {
+        this.gridPane.setHgap(8);
+        this.gridPane.setVgap(8);
+
+        Text handle = new Text("Welcome to the Random Bot Game!");
+        handle.setTextAlignment(TextAlignment.CENTER);
+        Text argInquire = new Text("What is the Grid size?");
+        argInquire.setTextAlignment(TextAlignment.CENTER);
+        Button submitStart = new Button("Go!");
+        submitStart.setTextAlignment(TextAlignment.CENTER);
+        CheckBox defaultBehaviors = new CheckBox("Defaults for the application");
+        defaultBehaviors.setTextAlignment(TextAlignment.CENTER);
+        TextField gridSizeStart = new TextField();
+
+            submitStart.setOnAction(actionEvent -> prepTheGame(argInquire, defaultBehaviors,
+                    gridSizeStart, startGUI));
+        defaultBehaviors.selectedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                gridSizeStart.setText("");
+            }
+        });
+
+        this.gridPane.add(handle,0,0);
+        this.gridPane.add(argInquire,0, 1);
+        this.gridPane.add(gridSizeStart,0,2);
+        this.gridPane.add(defaultBehaviors,1,2);
+        this.gridPane.add(submitStart,0,3);
+    }
+
+    private void prepTheGame(Text helpText, CheckBox defaults, TextField textInput, Stage startGUI)
+    {
+        int gridSize;
+
+            if (defaults.isSelected())
+            {
+                textInput.clear();
+                gridSize = 5;
+            }
+            else {
+                try {
+                    gridSize = Integer.parseInt(textInput.getText());
+                } catch (NumberFormatException e) {
+                    helpText.setText("Please enter a number or check 'defaults'");
+                    textInput.clear();
+                    return;
+                }
+            }
+            Main.gridSizeForGame = gridSize;
+            startGameGUI(gridSize, startGUI, defaults.isSelected(), helpText);
+        }
+
+
+    private void startGameGUI(int parseInt, Stage startGUI, boolean defaultsOn, Text help)
+        {
+            startGUI.close();
+
+            Stage mainGame = new Stage();
+            View gameView = new View();
+            if (defaultsOn)
+            {
+                gameView.gridSize = 5;
+                gameView.setGridSize(5);
+            }
+            else
+            {
+                try
+                {
+                    gameView.setGridSize(parseInt);
+                }
+                catch (NumberFormatException numException)
+                {
+                    help.setText("You cannot pass an empty value. Either enter a number or" +
+                            "click the default checkbox.");
+
+                }
+            }
+            Main.gameView = gameView;
+            // preparation of the game components for movement and treasure hunting
+            Main.prepareGame();
+
+            // establishes the actual View for the game which is managed in the View class
+            Main.setupView(gameView);
+
+            // size based on arg algorithm
+            double size = (13.0 * Math.pow(parseInt,2)) + 50;
+
+            // set the stage and start the show
+            mainGame.setTitle("Treasure Hunt");
+            mainGame.setScene(new Scene(gameView.gridPane, size, size));
+            mainGame.show();
+
+        }
+
 
     public void adjustBotAndTreasureLocations(Point bot, Point treasure) {
         for (Node node : gridPane.getChildren()) {
