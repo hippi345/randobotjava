@@ -5,6 +5,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 
+
+// needs an extensive review before moving forward
 public class Main extends Application {
     private static Game game;
     static int gridSizeForGame;
