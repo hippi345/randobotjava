@@ -21,6 +21,7 @@ public class Bot extends Point implements IMovablePoint
     // and a no argument moveRandomly
     public void Move(MoveEnum direction)
     {
+        getPossibleMoves();
         if (possibleMoves.contains(direction))
         {
             moveTheBot(direction);

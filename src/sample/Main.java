@@ -5,7 +5,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 // needs an extensive review before moving forward
-public class Main extends Application {
+public class Main extends Application
+{
     private static Game game;
     static int gridSizeForGame;
     public static View gameView;
@@ -61,12 +62,12 @@ public class Main extends Application {
         game.InitializeGame(gameView);
     }
 
+    // method to return the GUI to the main menu
     private static void backToStartup()
     {
         View.mainGame.close();
         View startView = new View();
         startView.startScreen(startGUI);
-
         startGUI.show();
     }
 }

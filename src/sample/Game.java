@@ -9,47 +9,43 @@ class Game
 {
 
     private int turnCount = 0;
-
     Bot bot;
     Treasure treasure;
 
-
+    // Game constructor
     Game(int gridSizePassed)
     {
         this.bot = new Bot(gridSizePassed);
         this.treasure = new Treasure();
     }
 
+    // game element initialization
     void InitializeGame(View gameView)
     {
         this.treasure.RandomizeLocation(gameView.gridSize);
-
         this.bot.RandomizeLocation(gameView.gridSize);
-
         while(this.bot.getX() == this.treasure.getX() && this.bot.getY() == this.treasure.getY())
         {
             this.bot.RandomizeLocation(gameView.gridSize);
         }
-
         gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 
-    void InitializeGame()
+    /*void InitializeGame()
     {
         View view = View.getInstance();
         this.treasure.RandomizeLocation(view.gridSize);
-
         this.bot.RandomizeLocation(view.gridSize);
-
         while(this.bot.getX() == this.treasure.getX() && this.bot.getY() == this.treasure.getY())
             {
                 this.bot.RandomizeLocation(view.gridSize);
             }
-
         view.adjustBotAndTreasureLocations(this.bot, this.treasure);
-    }
+    }*/
 
-    void executeAutoMove() {
+    // auto move execution
+    void executeAutoMove()
+    {
         // make next move
         ++turnCount;
         System.out.println("Current turn: " + turnCount);
@@ -74,9 +70,7 @@ class Game
         });*/
 
         this.bot.MoveRandomly();
-            if(treasureIsFound())
-                completeGame();
-
+        treasureDetection();
         Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 
@@ -104,43 +98,40 @@ class Game
         }
     };*/
 
+    // the below methods move the bot, check for treasure detection
+    // and then adjust the view
     void moveUp()
     {
         this.bot.Move(MoveEnum.Up);
-
-        if(treasureIsFound())
-            completeGame();
-
+        treasureDetection();
         Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 
     void moveDown()
     {
         this.bot.Move(MoveEnum.Down);
-
-        if(treasureIsFound())
-            completeGame();
-
+        treasureDetection();
         Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 
     void moveLeft()
     {
         this.bot.Move(MoveEnum.Left);
-
-        if(treasureIsFound())
-            completeGame();
-
+        treasureDetection();
         Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 
     void moveRight()
     {
         this.bot.Move(MoveEnum.Right);
+        treasureDetection();
+        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
+    }
 
+    // treasure detection
+    private void treasureDetection()
+    {
         if(treasureIsFound())
             completeGame();
-
-        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 }
