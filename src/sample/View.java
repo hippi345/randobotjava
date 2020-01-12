@@ -107,17 +107,17 @@ public class View
             if (defaults.isSelected())
             {
                 textInput.clear();
-                gridSize = 5;
+                gridSize = Constants.DEFAULT_GRIDSIZE;
             }
             else {
                 try {
                     // else provide the input as the size but with validation on failing to parse
                     // the input to a number (so empty or letters)
                     gridSize = Integer.parseInt(textInput.getText());
-                    if (gridSize > 15)
+                    if (gridSize > Constants.MAX_GRIDSIZE)
                     {
-                        gridSize = 15;
-                        System.out.println("Applying the max as input exceeded it");
+                        gridSize = Constants.MAX_GRIDSIZE;
+                        alertMsgOnMax();
                     }
                 }
                 catch (NumberFormatException e) {
@@ -133,6 +133,16 @@ public class View
             startGameGUI(gridSize, startGUI);
         }
 
+    private void alertMsgOnMax()
+    {
+        Stage alert = new Stage();
+        Text message = new Text("Applying the max as the grid size since input exceeded it");
+        Button ok = new Button("Ok");
+        ok.setOnAction(actionEvent -> alert.close());
+        GridPane msgGridPane = new GridPane();
+        msgGridPane.add(message, 0, 0);
+        msgGridPane.add(ok, 0, 1);
+    }
 
     private void startGameGUI(int parseInt, Stage startGUI)
         {

@@ -66,7 +66,7 @@ public class Main extends Application {
         View.mainGame.close();
         View startView = new View();
         startView.startScreen(startGUI);
-        
+
         startGUI.show();
     }
 }
