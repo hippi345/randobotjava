@@ -66,9 +66,7 @@ public class Main extends Application {
         View.mainGame.close();
         View startView = new View();
         startView.startScreen(startGUI);
-
-        Stage startGUI = new Stage();
-        startGUI.setScene(new Scene(startView.gridPane, 400, 200));
+        
         startGUI.show();
     }
 }

@@ -101,6 +101,7 @@ public class View
 
     private void prepTheGame(Text helpText, CheckBox defaults, TextField textInput, Stage startGUI)
     {
+        startGUI.close();
         int gridSize;
             // if defaults are checked then apply the default 5x5 size
             if (defaults.isSelected())
@@ -129,14 +130,12 @@ public class View
             // is the central grid pane resource for setting up the game gui
             Main.gridSizeForGame = gridSize;
             // start the actual game gui
-            startGameGUI(gridSize, startGUI, defaults.isSelected(), helpText);
+            startGameGUI(gridSize, startGUI);
         }
 
 
-    private void startGameGUI(int parseInt, Stage startGUI, boolean defaultsOn, Text help)
+    private void startGameGUI(int parseInt, Stage startGUI)
         {
-            // close the start gui as we don't need it any longer
-            startGUI.close();
             // creating the new game stage gui and view
             // Stage mainGame = new Stage();
             View gameView = new View();
