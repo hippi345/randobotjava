@@ -15,7 +15,7 @@ public class Main extends Application {
     // implements your default size if no arg is provided and makes a 5x5 grid
     private final ArrayList<String> parameters = new ArrayList<>();
 
-    private Stage startGUI = new Stage();
+    private static Stage startGUI = new Stage();
 
     @Override
     public void start(Stage primaryStage)
@@ -39,6 +39,7 @@ public class Main extends Application {
                 (o) -> game.executeAutoMove(),
                 (o) -> prepareGame(),
                 (o) -> RunAutoPlay(),
+                (o) -> backToStartup(),
                 (o) -> game.moveUp(),
                 (o) -> game.moveDown(),
                 (o) -> game.moveLeft(),
@@ -49,8 +50,8 @@ public class Main extends Application {
 
     // run moveBot continually with the warning on infinite loops suppressed
     @SuppressWarnings("InfiniteLoopStatement")
-    private static void RunAutoPlay() {
-
+    private static void RunAutoPlay()
+    {
         // Matt 1/9 - They're both running on the same thread, we need to figure out how we can have a separate UI thread
         // so that when we run the logic, it isn't blocking the UI thread.  That's basically what's happening now.
         while(true)
@@ -63,5 +64,16 @@ public class Main extends Application {
     static void prepareGame() {
         game = new Game(gridSizeForGame);
         game.InitializeGame(gameView);
+    }
+
+    private static void backToStartup()
+    {
+        View.mainGame.close();
+        View startView = new View();
+        startView.startScreen(startGUI);
+
+        Stage startGUI = new Stage();
+        startGUI.setScene(new Scene(startView.gridPane, 400, 200));
+        startGUI.show();
     }
 }
