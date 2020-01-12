@@ -53,7 +53,7 @@ class Game
         // make next move
         ++turnCount;
         System.out.println("Current turn: " + turnCount);
-        Bot threadBot = this.bot;
+        // Bot threadBot = this.bot;
 
         // Joel comment 12/9 - I don't know threads well but I tried but it was not working.
         // Did not break anything though
@@ -77,7 +77,7 @@ class Game
             if(treasureIsFound())
                 completeGame();
 
-        View.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
+        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 
     // actions on completion of the game

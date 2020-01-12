@@ -3,17 +3,12 @@ package sample;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import java.util.ArrayList;
-
 
 // needs an extensive review before moving forward
 public class Main extends Application {
     private static Game game;
     static int gridSizeForGame;
     public static View gameView;
-
-    // implements your default size if no arg is provided and makes a 5x5 grid
-    private final ArrayList<String> parameters = new ArrayList<>();
 
     private static Stage startGUI = new Stage();
 
