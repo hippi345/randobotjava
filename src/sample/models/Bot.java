@@ -32,6 +32,7 @@ public class Bot extends Point
     public void MoveRandomly()
     {
         // Determine which moves are possible, then add them to the list
+        ArrayList<MoveEnum> possibleMoves = new ArrayList<MoveEnum>();
         getPreferredMoves();
         Random randomNumberGenerator = new Random(System.currentTimeMillis());
         if (preferredMoves.size() != 0)
@@ -39,7 +40,7 @@ public class Bot extends Point
             int randomMovementNumber = randomNumberGenerator.nextInt(preferredMoves.size());
             MoveEnum chosenMove = preferredMoves.get(randomMovementNumber);
             if (possibleMoves.contains(chosenMove)) {
-                moveTheBot(chosenMove);
+                executeMove(chosenMove);
             }
             preferredMoves.clear();
         }
@@ -47,7 +48,7 @@ public class Bot extends Point
             {
                 int randomMovementNumber = randomNumberGenerator.nextInt(possibleMoves.size());
                 MoveEnum chosenMove = possibleMoves.get(randomMovementNumber);
-                moveTheBot(chosenMove);
+                executeMove(chosenMove);
             }
     }
 
