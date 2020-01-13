@@ -1,4 +1,4 @@
-package sample;
+package main.java;
 
 class Constants {
     static int DEFAULT_GRIDSIZE = 5;

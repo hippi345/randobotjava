@@ -1,4 +1,4 @@
-package sample.models;
+package main.java.models;
 
 // treasure is just a point. makes sense.
 public class Treasure extends Point {

@@ -1,8 +1,8 @@
-package sample;
+package main.java;
 
-import sample.models.Bot;
-import sample.models.MoveEnum;
-import sample.models.Treasure;
+import main.java.models.Bot;
+import main.java.models.MoveEnum;
+import main.java.models.Treasure;
 
 // class for the game components
 class Game

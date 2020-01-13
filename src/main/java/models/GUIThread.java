@@ -1,7 +1,7 @@
-package sample.models;
+package main.java.models;
 
-import sample.Main;
-import sample.View;
+import main.java.Main;
+import main.java.View;
 
 public class GUIThread extends Thread
 {

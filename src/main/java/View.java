@@ -1,4 +1,4 @@
-package sample;
+package main.java;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -10,7 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import sample.models.Point;
+import main.java.models.Point;
 import java.util.function.Consumer;
 
 public class View

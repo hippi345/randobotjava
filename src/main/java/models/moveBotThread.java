@@ -1,4 +1,4 @@
-package sample.models;
+package main.java.models;
 
 public class moveBotThread extends Thread
 {
