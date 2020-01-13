@@ -32,7 +32,7 @@ public class Bot extends Point
     public void MoveRandomly()
     {
         // Determine which moves are possible, then add them to the list
-        ArrayList<MoveEnum> possibleMoves = new ArrayList<MoveEnum>();
+        ArrayList<MoveEnum> possibleMoves = getPossibleMoves();
         getPreferredMoves();
         Random randomNumberGenerator = new Random(System.currentTimeMillis());
         if (preferredMoves.size() != 0)
