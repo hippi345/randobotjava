@@ -1,4 +1,4 @@
-package main.java.models;
+package com.randobotjava.models;
 
 import java.util.Random;
 

@@ -1,7 +1,8 @@
-package main.java.models;
+package com.randobotjava.models;
 
-import main.java.Main;
-import main.java.View;
+import com.randobotjava.models.Bot;
+import com.randobotjava.Main;
+import com.randobotjava.View;
 
 public class GUIThread extends Thread
 {

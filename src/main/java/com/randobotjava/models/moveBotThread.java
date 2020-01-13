@@ -1,4 +1,6 @@
-package main.java.models;
+package com.randobotjava.models;
+
+import com.randobotjava.models.Bot;
 
 public class moveBotThread extends Thread
 {

@@ -1,8 +1,8 @@
-package main.java;
+package com.randobotjava;
 
-import main.java.models.Bot;
-import main.java.models.MoveEnum;
-import main.java.models.Treasure;
+import com.randobotjava.models.Bot;
+import com.randobotjava.models.MoveEnum;
+import com.randobotjava.models.Treasure;
 
 // class for the game components
 class Game
