@@ -9,13 +9,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import sample.models.Point;
 import java.util.function.Consumer;
 
 public class View
 {
+    static Stage mainGame;
     private static View instance = null;
     GridPane gridPane;
     int gridSize = Constants.DEFAULT_GRIDSIZE;
@@ -23,9 +23,14 @@ public class View
     // Constructor must be private for the Singleton pattern.
     View()
     {
+        mainGame = new Stage();
         this.gridPane = new GridPane();
     }
 
+    // Joel note
+    // So trying to use get instance kept returning a blank view and so
+    // it was not working correctly
+    // could have been in how I was setting up what was calling it but I was not sure
     View(int gridSize)
     {
         this.gridPane = new GridPane();
@@ -42,11 +47,13 @@ public class View
         return instance;
     }
 
+    // setter for grid size
     private void setGridSize(int gridSize)
     {
         this.gridSize = gridSize;
     }
 
+    // setting up gaps specific to every grid pane
     void setupTheGridPane() {
         this.gridPane.setHgap(8);
         this.gridPane.setVgap(8);
@@ -68,28 +75,35 @@ public class View
     // setting up the start screen
     void startScreen(Stage startGUI)
     {
+        // gap between elements in the start screen
         this.gridPane.setHgap(8);
         this.gridPane.setVgap(8);
 
+        // elements for the start screen gui stage
         Text handle = new Text("Welcome to the Random Bot Game!");
-        handle.setTextAlignment(TextAlignment.CENTER);
-        Text argInquire = new Text("What is the Grid size?");
-        argInquire.setTextAlignment(TextAlignment.CENTER);
+        Text argInquire = new Text("What is the Grid size? (size <= 15)");
         Button submitStart = new Button("Go!");
-        submitStart.setTextAlignment(TextAlignment.CENTER);
         CheckBox defaultBehaviors = new CheckBox("Defaults for the application");
-        defaultBehaviors.setTextAlignment(TextAlignment.CENTER);
         TextField gridSizeStart = new TextField();
 
-            submitStart.setOnAction(actionEvent -> prepTheGame(argInquire, defaultBehaviors,
-                    gridSizeStart, startGUI));
-        defaultBehaviors.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        // force the field to be numeric only
+        gridSizeStart.textProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                gridSizeStart.setText("");
+            public void changed(ObservableValue<? extends String> observable, String oldValue,
+                                String newValue) {
+                if (!newValue.matches("\\d*")) {
+                    gridSizeStart.setText(newValue.replaceAll("[^\\d]", ""));
+                }
             }
         });
 
+        // button action to start the actual game
+        submitStart.setOnAction(actionEvent -> prepTheGame(defaultBehaviors, gridSizeStart, startGUI));
+        // listener on the checkbox such that the defaults are applied, the text is cleared
+        // the checkbox is also checked on the game running for whether to apply defaults or not
+        defaultBehaviors.selectedProperty().addListener((observable, oldValue,
+                                                         newValue) -> gridSizeStart.setText(""));
+        // add the elements to the grid pane
         this.gridPane.add(handle,0,0);
         this.gridPane.add(argInquire,0, 1);
         this.gridPane.add(gridSizeStart,0,2);
@@ -97,71 +111,68 @@ public class View
         this.gridPane.add(submitStart,0,3);
     }
 
-    private void prepTheGame(Text helpText, CheckBox defaults, TextField textInput, Stage startGUI)
+    private void prepTheGame(CheckBox defaults, TextField textInput, Stage startGUI)
     {
         int gridSize;
-
-            if (defaults.isSelected())
+            // if defaults are checked then apply the default 5x5 size
+        if (defaults.isSelected())
             {
                 textInput.clear();
-                gridSize = 5;
+                gridSize = Constants.DEFAULT_GRIDSIZE;
             }
-            else {
-                try {
-                    gridSize = Integer.parseInt(textInput.getText());
-                } catch (NumberFormatException e) {
-                    helpText.setText("Please enter a number or check 'defaults'");
-                    textInput.clear();
-                    return;
-                }
-            }
-            Main.gridSizeForGame = gridSize;
-            startGameGUI(gridSize, startGUI, defaults.isSelected(), helpText);
-        }
-
-
-    private void startGameGUI(int parseInt, Stage startGUI, boolean defaultsOn, Text help)
-        {
-            startGUI.close();
-
-            Stage mainGame = new Stage();
-            View gameView = new View();
-            if (defaultsOn)
-            {
-                gameView.gridSize = 5;
-                gameView.setGridSize(5);
-            }
-            else
-            {
-                try
+        else {
+            gridSize = Integer.parseInt(textInput.getText());
+            if (gridSize > Constants.MAX_GRIDSIZE)
                 {
-                    gameView.setGridSize(parseInt);
-                }
-                catch (NumberFormatException numException)
-                {
-                    help.setText("You cannot pass an empty value. Either enter a number or" +
-                            "click the default checkbox.");
-
+                    gridSize = Constants.MAX_GRIDSIZE;
+                    alertMsgOnMax();
                 }
             }
-            Main.gameView = gameView;
-            // preparation of the game components for movement and treasure hunting
-            Main.prepareGame();
+        startGUI.close();
+        // apply the computed grid size to the grid pane used in main which
+        // is the central grid pane resource for setting up the game gui
+        Main.gridSizeForGame = gridSize;
+        // start the actual game gui
+        startGameGUI(gridSize);
+    }
 
-            // establishes the actual View for the game which is managed in the View class
-            Main.setupView(gameView);
+    // creates a pop up GUI stage alerting the user that the number provided exceeds the max so the max was used
+    private void alertMsgOnMax()
+    {
+        Stage alert = new Stage();
+        Text message = new Text("Applying the max size (15) as the actual grid size since input exceeded it.");
+        Button ok = new Button("Ok");
+        ok.setOnAction(actionEvent -> alert.close());
+        GridPane msgGridPane = new GridPane();
+        msgGridPane.add(message, 0, 0);
+        msgGridPane.add(ok, 0, 1);
+        alert.setScene(new Scene(msgGridPane, 400, 75));
+        alert.show();
+        alert.setAlwaysOnTop(true);
+    }
 
-            // size based on arg algorithm
-            double size = (13.0 * Math.pow(parseInt,2)) + 50;
+    // startup of the game gui stage
+    private void startGameGUI(int parseInt) {
+        // creating the new game stage gui and view
+        // Stage mainGame = new Stage();
+        View gameView = new View();
+        // setting the view grid size
+        gameView.setGridSize(parseInt);
+        // setting the main game view to a fresh game view
+        Main.gameView = gameView;
+        // preparation of the game components for movement and treasure hunting
+        Main.prepareGame();
+        // establishes the actual View for the game which is managed in the View class
+        Main.setupView(gameView);
+        // size based on arg algorithm
+        double size = (13.0 * Math.pow(parseInt,2)) + 50;
+        // set the stage and start the show
+        mainGame.setTitle("Treasure Hunt");
+        mainGame.setScene(new Scene(gameView.gridPane, size, size));
+        mainGame.show();
+    }
 
-            // set the stage and start the show
-            mainGame.setTitle("Treasure Hunt");
-            mainGame.setScene(new Scene(gameView.gridPane, size, size));
-            mainGame.show();
-
-        }
-
-
+    // sets the text on the nodes to reflect the move just made
     public void adjustBotAndTreasureLocations(Point bot, Point treasure) {
         for (Node node : gridPane.getChildren()) {
             int currentColumnIndex = GridPane.getColumnIndex(node);
@@ -170,7 +181,6 @@ public class View
             if(node instanceof Text)
             {
                 String textToSet  = "";
-
                 if(bot.getX() == currentColumnIndex && bot.getY() == currentRowIndex)
                 {
                     textToSet = bot.getX() + " " + bot.getY() + " " + " bot";
@@ -183,22 +193,21 @@ public class View
                 {
                     textToSet = currentColumnIndex + " " + currentRowIndex + " empty";
                 }
-
                 ((Text) node).setText(textToSet);
             }
         }
     }
 
-    // sets up the buttons and adds them to the grid pane
-    // The 3 consumers sent to this method should NOT TAKE AN INPUT.  We had to put the object to get around being
-    // forced to send something to the method.
+    // setting up the button element components of the game gui
     void setupButtons(Consumer<Object> nextFunction, Consumer<Object> resetFunction, Consumer<Object> autoPlayFunction,
-    Consumer<Object> upFunction, Consumer<Object> downFunction, Consumer<Object> leftFunction, Consumer<Object> rightFunction)
+    Consumer<Object> leaveGame, Consumer<Object> upFunction, Consumer<Object> downFunction,
+                      Consumer<Object> leftFunction, Consumer<Object> rightFunction)
     {
         // four main buttons
         Button nextPlay = new Button("Next move");
         Button reset = new Button("Reset");
         Button autoPlay = new Button("AutoPlay");
+        Button exit = new Button("Leave game");
 
         // cardinal buttons
         Button upMovement = new Button("Move Up");
@@ -211,6 +220,7 @@ public class View
         nextPlay.setOnAction(actionEvent -> nextFunction.accept(null));
         reset.setOnAction(actionEvent -> resetFunction.accept(null));
         autoPlay.setOnAction(actionEvent -> autoPlayFunction.accept(null));
+        exit.setOnAction(actionEvent -> leaveGame.accept(null));
 
         // cardinal actions on click
         upMovement.setOnAction(actionEvent -> upFunction.accept(null));
@@ -222,11 +232,12 @@ public class View
         gridPane.add(nextPlay,1, gridSize + 1);
         gridPane.add(reset,1, gridSize + 2);
         gridPane.add(autoPlay,1,gridSize + 3);
+        gridPane.add(exit, 1, gridSize + 4);
 
         // buttons to the grid pane
-        gridPane.add(upMovement, 1, gridSize + 4);
-        gridPane.add(downMovement, 1, gridSize + 6);
-        gridPane.add(leftMovement, 0, gridSize + 5);
-        gridPane.add(rightMovement, 2, gridSize + 5);
+        gridPane.add(upMovement, 1, gridSize + 5);
+        gridPane.add(downMovement, 1, gridSize + 7);
+        gridPane.add(leftMovement, 0, gridSize + 6);
+        gridPane.add(rightMovement, 2, gridSize + 6);
     }
 }
