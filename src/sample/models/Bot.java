@@ -1,14 +1,13 @@
 package sample.models;
 
-import sample.interfaces.IMovablePoint;
-
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Bot extends Point implements IMovablePoint
+public class Bot extends Point
 {
-    private ArrayList<MoveEnum> possibleMoves = new ArrayList<>();
     private int movementBoundary;
+
     public Bot(int movementBoundary)
     {
         super();
@@ -20,10 +19,10 @@ public class Bot extends Point implements IMovablePoint
     public void Move(MoveEnum direction)
     {
         // Determine which moves are possible, then add them to the list
-        getPossibleMoves();
+        var possibleMoves = getPossibleMoves();
         if (possibleMoves.contains(direction))
         {
-            moveTheBot(direction);
+            executeMove(direction);
         }
     }
 
@@ -31,22 +30,26 @@ public class Bot extends Point implements IMovablePoint
     public void MoveRandomly()
     {
         // Determine which moves are possible, then add them to the list
-        getPossibleMoves();
+        var possibleMoves = getPossibleMoves();
         Random randomNumberGenerator = new Random(System.currentTimeMillis());
         int randomMovementNumber = randomNumberGenerator.nextInt(possibleMoves.size());
         MoveEnum chosenMove = possibleMoves.get(randomMovementNumber);
-        moveTheBot(chosenMove);
+        executeMove(chosenMove);
     }
 
-    private void getPossibleMoves()
+    private ArrayList<MoveEnum> getPossibleMoves()
     {
+        ArrayList<MoveEnum> possibleMoves = new ArrayList<MoveEnum>();
+
         if(this.y != 0) possibleMoves.add(MoveEnum.Up);
         if(this.x != this.movementBoundary - 1) possibleMoves.add(MoveEnum.Right);
         if(this.y != this.movementBoundary - 1) possibleMoves.add(MoveEnum.Down);
         if(this.x != 0) possibleMoves.add(MoveEnum.Left);
+
+        return possibleMoves;
     }
 
-    private void moveTheBot(MoveEnum direction)
+    private void executeMove(MoveEnum direction)
     {
         switch (direction)
         {
@@ -63,6 +66,5 @@ public class Bot extends Point implements IMovablePoint
                 --this.x;
                 break;
         }
-        possibleMoves.clear();
     }
 }
