@@ -115,26 +115,26 @@ public class View
     {
         int gridSize;
             // if defaults are checked then apply the default 5x5 size
-            if (defaults.isSelected())
+        if (defaults.isSelected())
             {
                 textInput.clear();
                 gridSize = Constants.DEFAULT_GRIDSIZE;
             }
-            else {
-                    gridSize = Integer.parseInt(textInput.getText());
-                    if (gridSize > Constants.MAX_GRIDSIZE)
-                    {
-                        gridSize = Constants.MAX_GRIDSIZE;
-                        alertMsgOnMax();
-                    }
+        else {
+            gridSize = Integer.parseInt(textInput.getText());
+            if (gridSize > Constants.MAX_GRIDSIZE)
+                {
+                    gridSize = Constants.MAX_GRIDSIZE;
+                    alertMsgOnMax();
                 }
-            startGUI.close();
-            // apply the computed grid size to the grid pane used in main which
-            // is the central grid pane resource for setting up the game gui
-            Main.gridSizeForGame = gridSize;
-            // start the actual game gui
-            startGameGUI(gridSize);
-        }
+            }
+        startGUI.close();
+        // apply the computed grid size to the grid pane used in main which
+        // is the central grid pane resource for setting up the game gui
+        Main.gridSizeForGame = gridSize;
+        // start the actual game gui
+        startGameGUI(gridSize);
+    }
 
     // creates a pop up GUI stage alerting the user that the number provided exceeds the max so the max was used
     private void alertMsgOnMax()
@@ -152,26 +152,25 @@ public class View
     }
 
     // startup of the game gui stage
-    private void startGameGUI(int parseInt)
-        {
-            // creating the new game stage gui and view
-            // Stage mainGame = new Stage();
-            View gameView = new View();
-            // setting the view grid size
-            gameView.setGridSize(parseInt);
-            // setting the main game view to a fresh game view
-            Main.gameView = gameView;
-            // preparation of the game components for movement and treasure hunting
-            Main.prepareGame();
-            // establishes the actual View for the game which is managed in the View class
-            Main.setupView(gameView);
-            // size based on arg algorithm
-            double size = (13.0 * Math.pow(parseInt,2)) + 50;
-            // set the stage and start the show
-            mainGame.setTitle("Treasure Hunt");
-            mainGame.setScene(new Scene(gameView.gridPane, size, size));
-            mainGame.show();
-        }
+    private void startGameGUI(int parseInt) {
+        // creating the new game stage gui and view
+        // Stage mainGame = new Stage();
+        View gameView = new View();
+        // setting the view grid size
+        gameView.setGridSize(parseInt);
+        // setting the main game view to a fresh game view
+        Main.gameView = gameView;
+        // preparation of the game components for movement and treasure hunting
+        Main.prepareGame();
+        // establishes the actual View for the game which is managed in the View class
+        Main.setupView(gameView);
+        // size based on arg algorithm
+        double size = (13.0 * Math.pow(parseInt,2)) + 50;
+        // set the stage and start the show
+        mainGame.setTitle("Treasure Hunt");
+        mainGame.setScene(new Scene(gameView.gridPane, size, size));
+        mainGame.show();
+    }
 
     // sets the text on the nodes to reflect the move just made
     public void adjustBotAndTreasureLocations(Point bot, Point treasure) {
@@ -182,7 +181,6 @@ public class View
             if(node instanceof Text)
             {
                 String textToSet  = "";
-
                 if(bot.getX() == currentColumnIndex && bot.getY() == currentRowIndex)
                 {
                     textToSet = bot.getX() + " " + bot.getY() + " " + " bot";
@@ -195,7 +193,6 @@ public class View
                 {
                     textToSet = currentColumnIndex + " " + currentRowIndex + " empty";
                 }
-
                 ((Text) node).setText(textToSet);
             }
         }
