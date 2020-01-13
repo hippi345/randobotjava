@@ -1,11 +1,12 @@
 package sample;
 
+import sample.interfaces.IGame;
 import sample.models.Bot;
 import sample.models.MoveEnum;
 import sample.models.Treasure;
 
 // class for the game components
-class Game
+class Game implements IGame
 {
 
     private int turnCount = 0;
@@ -13,14 +14,15 @@ class Game
     Treasure treasure;
 
     // Game constructor
-    Game(int gridSizePassed)
+    Game(int gridSizePassed, View gameView)
     {
         this.bot = new Bot(gridSizePassed);
         this.treasure = new Treasure();
+        InitializeGame(gameView);
     }
 
     // game element initialization
-    void InitializeGame(View gameView)
+    private void InitializeGame(View gameView)
     {
         this.treasure.RandomizeLocation(gameView.gridSize);
         this.bot.RandomizeLocation(gameView.gridSize);
@@ -44,33 +46,44 @@ class Game
     }*/
 
     // auto move execution
-    void executeAutoMove()
+    public void Move()
+    {
+        this.Move(MoveEnum.None);
+    }
+
+    public void Move(MoveEnum requestedMove)
+    {
+        executeMove(requestedMove);
+    }
+
+    public Bot getBot()
+    {
+        return this.bot;
+    }
+
+    public Treasure getTreasure()
+    {
+        return this.treasure;
+    }
+
+    private void executeMove(MoveEnum requestedMove)
     {
         // make next move
         ++turnCount;
         System.out.println("Current turn: " + turnCount);
-        // Bot threadBot = this.bot;
 
-        // Joel comment 12/9 - I don't know threads well but I tried but it was not working.
-        // Did not break anything though
-
-        /*Thread botThread = new moveBotThread(this.bot);
-        botThread.start();
-
-        Thread guiThread = new GUIThread(this.bot, this.treasure, view);
-        guiThread.start();*/
-
-        /*Thread movementThread = new Thread(moveTask);
-        movementThread.setDaemon(true);
-        movementThread.start();
-
-        moveTask.setOnSucceeded(e ->
+        if (requestedMove == MoveEnum.None)
         {
-            view.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
-        });*/
+            this.bot.MoveRandomly();
+        }
+        else
+        {
+            this.bot.Move(requestedMove);
+        }
 
-        this.bot.MoveRandomly();
-        treasureDetection();
+        if(treasureIsFound())
+            completeGame();
+
         Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 
@@ -85,53 +98,5 @@ class Game
     private boolean treasureIsFound()
     {
         return this.bot.getX() == this.treasure.getX() && this.bot.getY() == this.treasure.getY();
-    }
-
-    /*private Task<Void> moveTask = new Task<>() {
-        @Override
-        protected Void call()
-        {
-            threadBot.MoveRandomly();
-            if(treasureIsFound())
-                completeGame();
-            return null;
-        }
-    };*/
-
-    // the below methods move the bot, check for treasure detection
-    // and then adjust the view
-    void moveUp()
-    {
-        this.bot.Move(MoveEnum.Up);
-        treasureDetection();
-        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
-    }
-
-    void moveDown()
-    {
-        this.bot.Move(MoveEnum.Down);
-        treasureDetection();
-        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
-    }
-
-    void moveLeft()
-    {
-        this.bot.Move(MoveEnum.Left);
-        treasureDetection();
-        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
-    }
-
-    void moveRight()
-    {
-        this.bot.Move(MoveEnum.Right);
-        treasureDetection();
-        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
-    }
-
-    // treasure detection
-    private void treasureDetection()
-    {
-        if(treasureIsFound())
-            completeGame();
     }
 }

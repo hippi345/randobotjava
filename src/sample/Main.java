@@ -3,11 +3,13 @@ package sample;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import sample.interfaces.IGame;
+import sample.models.MoveEnum;
 
 // needs an extensive review before moving forward
 public class Main extends Application
 {
-    private static Game game;
+    private static IGame game;
     static int gridSizeForGame;
     public static View gameView;
 
@@ -32,16 +34,16 @@ public class Main extends Application
 
         // setting up the buttons which go into the UI
         gameView.setupButtons(
-                (o) -> game.executeAutoMove(),
+                (o) -> game.Move(),
                 (o) -> prepareGame(),
                 (o) -> RunAutoPlay(),
                 (o) -> backToStartup(),
-                (o) -> game.moveUp(),
-                (o) -> game.moveDown(),
-                (o) -> game.moveLeft(),
-                (o) -> game.moveRight());
+                (o) -> game.Move(MoveEnum.Up),
+                (o) -> game.Move(MoveEnum.Down),
+                (o) -> game.Move(MoveEnum.Left),
+                (o) -> game.Move(MoveEnum.Right));
 
-        gameView.adjustBotAndTreasureLocations(game.bot, game.treasure);
+        gameView.adjustBotAndTreasureLocations(game.getBot(), game.getTreasure());
     }
 
     // run moveBot continually with the warning on infinite loops suppressed
@@ -52,14 +54,13 @@ public class Main extends Application
         // so that when we run the logic, it isn't blocking the UI thread.  That's basically what's happening now.
         while(true)
         {
-            game.executeAutoMove();
+            game.Move();
         }
     }
 
     // sets up the Game object with bot and treasure objects in place with coordinates on the grid
     static void prepareGame() {
-        game = new Game(gridSizeForGame);
-        game.InitializeGame(gameView);
+        game = new Game(gridSizeForGame, gameView);
     }
 
     // method to return the GUI to the main menu
