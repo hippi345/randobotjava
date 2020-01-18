@@ -5,9 +5,7 @@ import java.util.Random;
 
 public class Bot extends Point
 {
-    private ArrayList<MoveEnum> preferredMoves = new ArrayList<>();
     private ArrayList<String> movesMade = new ArrayList<>();
-    private ArrayList<MoveEnum> possibleMoves = new ArrayList<>();
     private int movementBoundary;
     private Random randomNumberGenerator = new Random(System.currentTimeMillis());
 
@@ -20,37 +18,33 @@ public class Bot extends Point
     public void Move(MoveEnum direction)
     {
         // Determine which moves are possible, then add them to the list
-        possibleMoves = getPossibleMoves();
+        ArrayList<MoveEnum> possibleMoves = getPossibleMoves();
         if (possibleMoves.contains(direction))
         {
             executeMove(direction);
         }
-        possibleMoves.clear();
     }
 
     // random bot movement
     public void MoveRandomly()
     {
         // Determine which moves are possible, then add them to the list
-        possibleMoves = getPossibleMoves();
-        preferredMoves = getPreferredMoves();
-        // Random randomNumberGenerator = new Random(System.currentTimeMillis());
+        ArrayList<MoveEnum> possibleMoves = getPossibleMoves();
+        ArrayList<MoveEnum> preferredMoves = getPreferredMoves();
         if (preferredMoves.size() != 0)
         {
             int randomMovementNumber = this.randomNumberGenerator.nextInt(preferredMoves.size());
             MoveEnum chosenMove = preferredMoves.get(randomMovementNumber);
-            if (possibleMoves.contains(chosenMove)) {
+            if (possibleMoves.contains(chosenMove))
+            {
                 executeMove(chosenMove);
             }
-            preferredMoves.clear();
-            possibleMoves.clear();
         }
         else
             {
                 int randomMovementNumber = randomNumberGenerator.nextInt(possibleMoves.size());
                 MoveEnum chosenMove = possibleMoves.get(randomMovementNumber);
                 executeMove(chosenMove);
-                possibleMoves.clear();
             }
     }
 
