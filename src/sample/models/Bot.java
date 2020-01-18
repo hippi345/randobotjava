@@ -9,6 +9,7 @@ public class Bot extends Point
     private ArrayList<String> movesMade = new ArrayList<>();
     private ArrayList<MoveEnum> possibleMoves = new ArrayList<>();
     private int movementBoundary;
+    private Random randomNumberGenerator = new Random(System.currentTimeMillis());
 
     public Bot(int movementBoundary)
     {
@@ -33,10 +34,10 @@ public class Bot extends Point
         // Determine which moves are possible, then add them to the list
         possibleMoves = getPossibleMoves();
         preferredMoves = getPreferredMoves();
-        Random randomNumberGenerator = new Random(System.currentTimeMillis());
+        // Random randomNumberGenerator = new Random(System.currentTimeMillis());
         if (preferredMoves.size() != 0)
         {
-            int randomMovementNumber = randomNumberGenerator.nextInt(preferredMoves.size());
+            int randomMovementNumber = this.randomNumberGenerator.nextInt(preferredMoves.size());
             MoveEnum chosenMove = preferredMoves.get(randomMovementNumber);
             if (possibleMoves.contains(chosenMove)) {
                 executeMove(chosenMove);
