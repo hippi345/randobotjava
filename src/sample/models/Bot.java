@@ -1,6 +1,5 @@
 package sample.models;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -21,7 +20,9 @@ public class Bot extends Point
     public void Move(MoveEnum direction)
     {
         // Determine which moves are possible, then add them to the list
-        var possibleMoves = getPossibleMoves();
+        // Java 11 does not support JavaFx and 9 does not support var so
+        // changing this to be compatible on both
+        ArrayList<MoveEnum> possibleMoves = getPossibleMoves();
         if (possibleMoves.contains(direction))
         {
             executeMove(direction);
@@ -32,22 +33,23 @@ public class Bot extends Point
     public void MoveRandomly()
     {
         // Determine which moves are possible, then add them to the list
+        ArrayList<MoveEnum> possibleMoves = getPossibleMoves();
         getPreferredMoves();
         Random randomNumberGenerator = new Random(System.currentTimeMillis());
         if (preferredMoves.size() != 0)
         {
             int randomMovementNumber = randomNumberGenerator.nextInt(preferredMoves.size());
             MoveEnum chosenMove = preferredMoves.get(randomMovementNumber);
-            if (possibleMoves.contains(chosenMove)) {
-                moveTheBot(chosenMove);
-            }
+            if (possibleMoves.contains(chosenMove))
+                Move(chosenMove);
+
             preferredMoves.clear();
         }
         else
             {
                 int randomMovementNumber = randomNumberGenerator.nextInt(possibleMoves.size());
                 MoveEnum chosenMove = possibleMoves.get(randomMovementNumber);
-                moveTheBot(chosenMove);
+                Move(chosenMove);
             }
     }
 
@@ -126,11 +128,6 @@ public class Bot extends Point
                 }
             }
         }
-        var possibleMoves = getPossibleMoves();
-        Random randomNumberGenerator = new Random(System.currentTimeMillis());
-        int randomMovementNumber = randomNumberGenerator.nextInt(possibleMoves.size());
-        MoveEnum chosenMove = possibleMoves.get(randomMovementNumber);
-        executeMove(chosenMove);
     }
 
     private ArrayList<MoveEnum> getPossibleMoves()
