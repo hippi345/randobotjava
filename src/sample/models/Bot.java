@@ -5,9 +5,9 @@ import java.util.Random;
 
 public class Bot extends Point
 {
-    private ArrayList<MoveEnum> preferredMoves = new ArrayList<>();
     private ArrayList<String> movesMade = new ArrayList<>();
     private int movementBoundary;
+    private Random randomNumberGenerator = new Random(System.currentTimeMillis());
 
     public Bot(int movementBoundary)
     {
@@ -15,12 +15,9 @@ public class Bot extends Point
         this.movementBoundary = movementBoundary;
     }
 
-    // made the interface instead to require a moveEnum move
-    // and a no argument moveRandomly
     public void Move(MoveEnum direction)
     {
         // Determine which moves are possible, then add them to the list
-        // JDK 9 does not support var but 11 does not support JavaFx so changing this
         ArrayList<MoveEnum> possibleMoves = getPossibleMoves();
         if (possibleMoves.contains(direction))
         {
@@ -33,16 +30,15 @@ public class Bot extends Point
     {
         // Determine which moves are possible, then add them to the list
         ArrayList<MoveEnum> possibleMoves = getPossibleMoves();
-        getPreferredMoves();
-        Random randomNumberGenerator = new Random(System.currentTimeMillis());
+        ArrayList<MoveEnum> preferredMoves = getPreferredMoves();
         if (preferredMoves.size() != 0)
         {
-            int randomMovementNumber = randomNumberGenerator.nextInt(preferredMoves.size());
+            int randomMovementNumber = this.randomNumberGenerator.nextInt(preferredMoves.size());
             MoveEnum chosenMove = preferredMoves.get(randomMovementNumber);
-            if (possibleMoves.contains(chosenMove)) {
+            if (possibleMoves.contains(chosenMove))
+            {
                 executeMove(chosenMove);
             }
-            preferredMoves.clear();
         }
         else
             {
@@ -52,8 +48,10 @@ public class Bot extends Point
             }
     }
 
-    private void getPreferredMoves()
+    private ArrayList<MoveEnum> getPreferredMoves()
     {
+        ArrayList<MoveEnum> preferredMoves = new ArrayList<MoveEnum>();
+        // up preferred move
         if(this.y != 0)
         {
             if (movesMade.size() == 0)
@@ -62,17 +60,14 @@ public class Bot extends Point
             }
             for (String move : movesMade)
             {
-                // extracting x and y
-                int xMove = Integer.parseInt(move.split(" ")[0]);
-                int yMove = Integer.parseInt(move.split(" ")[1]);
-                int proposedY = y-1;
-                if (this.x != xMove || proposedY != yMove)
+                if (this.x != Integer.parseInt(move.split(" ")[0])
+                        || (this.y-1) != Integer.parseInt(move.split(" ")[1]))
                 {
                     preferredMoves.add(MoveEnum.Up);
                 }
             }
         }
-
+        // right preferred move
         if(this.x != this.movementBoundary - 1)
         {
             if (movesMade.size() == 0)
@@ -81,16 +76,14 @@ public class Bot extends Point
             }
             for (String move : movesMade)
             {
-                // extracting x and y
-                int xMove = Integer.parseInt(move.split(" ")[0]);
-                int yMove = Integer.parseInt(move.split(" ")[1]);
-                int proposedX = x+1;
-                if (proposedX != xMove || this.y != yMove)
+                if ((this.x+1) != Integer.parseInt(move.split(" ")[0])
+                        || this.y != Integer.parseInt(move.split(" ")[1]))
                 {
                     preferredMoves.add(MoveEnum.Right);
                 }
             }
         }
+        // down preferred move
         if(this.y != this.movementBoundary - 1)
         {
             if (movesMade.size() == 0)
@@ -99,16 +92,14 @@ public class Bot extends Point
             }
             for (String move : movesMade)
             {
-                // extracting x and y
-                int xMove = Integer.parseInt(move.split(" ")[0]);
-                int yMove = Integer.parseInt(move.split(" ")[1]);
-                int proposedY = y+1;
-                if (this.x != xMove || proposedY != yMove)
+                if (this.x != Integer.parseInt(move.split(" ")[0])
+                        || (this.y+1) != Integer.parseInt(move.split(" ")[1]))
                 {
                     preferredMoves.add(MoveEnum.Down);
                 }
             }
         }
+        // left preferred move
         if(this.x != 0)
         {
             if (movesMade.size() == 0)
@@ -117,16 +108,14 @@ public class Bot extends Point
             }
             for (String move : movesMade)
             {
-                // extracting x and y
-                int xMove = Integer.parseInt(move.split(" ")[0]);
-                int yMove = Integer.parseInt(move.split(" ")[1]);
-                int proposedX = x-1;
-                if (proposedX != xMove || this.y != yMove)
+                if ((this.x-1) != Integer.parseInt(move.split(" ")[0])
+                        || this.y != Integer.parseInt(move.split(" ")[1]))
                 {
                     preferredMoves.add(MoveEnum.Left);
                 }
             }
         }
+        return preferredMoves;
     }
 
     private ArrayList<MoveEnum> getPossibleMoves()
