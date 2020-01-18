@@ -31,18 +31,6 @@ class Game
         gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
 
-    /*void InitializeGame()
-    {
-        View view = View.getInstance();
-        this.treasure.RandomizeLocation(view.gridSize);
-        this.bot.RandomizeLocation(view.gridSize);
-        while(this.bot.getX() == this.treasure.getX() && this.bot.getY() == this.treasure.getY())
-            {
-                this.bot.RandomizeLocation(view.gridSize);
-            }
-        view.adjustBotAndTreasureLocations(this.bot, this.treasure);
-    }*/
-
     // auto move execution
     void executeAutoMove()
     {
