@@ -65,7 +65,7 @@ public class Bot extends Point implements IMoveablePoint
     {
         // Determine which moves are possible, then add them to the list
         ArrayList<MoveEnum> possibleMoves = getPossibleMoves();
-        getPreferredMoves();
+        ArrayList<MoveEnum> preferredMoves = getPreferredMoves();
         MoveEnum move = MoveEnum.Stay;
         if (preferredMoves.size() != 0)
         {
