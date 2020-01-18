@@ -21,7 +21,8 @@ public class Bot extends Point
     public void Move(MoveEnum direction)
     {
         // Determine which moves are possible, then add them to the list
-        var possibleMoves = getPossibleMoves();
+        // JDK 9 does not support var but 11 does not support JavaFx so changing this
+        ArrayList<MoveEnum> possibleMoves = getPossibleMoves();
         if (possibleMoves.contains(direction))
         {
             executeMove(direction);
@@ -127,11 +128,6 @@ public class Bot extends Point
                 }
             }
         }
-        var possibleMoves = getPossibleMoves();
-        Random randomNumberGenerator = new Random(System.currentTimeMillis());
-        int randomMovementNumber = randomNumberGenerator.nextInt(possibleMoves.size());
-        MoveEnum chosenMove = possibleMoves.get(randomMovementNumber);
-        executeMove(chosenMove);
     }
 
     private ArrayList<MoveEnum> getPossibleMoves()
