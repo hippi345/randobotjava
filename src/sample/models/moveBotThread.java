@@ -1,8 +1,10 @@
 package sample.models;
 
+import sample.interfaces.IMoveablePoint;
+
 public class moveBotThread extends Thread
 {
-    private Bot bot;
+    private IMoveablePoint bot;
 
     public moveBotThread(Bot bot)
     {
@@ -11,6 +13,7 @@ public class moveBotThread extends Thread
 
     public void start()
     {
-        bot.MoveRandomly();
+        MoveEnum move = bot.DetermineMovement();
+        bot.Move(move);
     }
 }

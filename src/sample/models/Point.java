@@ -1,8 +1,11 @@
 package sample.models;
 
+import sample.interfaces.IMoveablePoint;
+import sample.interfaces.IPoint;
+
 import java.util.Random;
 
-public class Point
+public class Point implements IPoint
 {
     int x;
     int y;
@@ -16,6 +19,13 @@ public class Point
      {
          this.x = x;
          this.y = y;
+     }
+
+     public boolean equals(Point p)
+     {
+         if(p == null)
+             return false;
+         return p.x == this.x && p.y == this.y;
      }
 
      public void RandomizeLocation(int bound)
@@ -34,4 +44,29 @@ public class Point
      {
          return this.y;
      }
+
+     protected void MoveTo(int x, int y)
+     {
+         this.x = x;
+         this.y = y;
+     }
+
+    protected void MoveInDirection(MoveEnum direction)
+    {
+        switch (direction)
+        {
+            case Up:
+                --this.y;
+                break;
+            case Right:
+                ++this.x;
+                break;
+            case Down:
+                ++this.y;
+                break;
+            case Left:
+                --this.x;
+                break;
+        }
+    }
 }

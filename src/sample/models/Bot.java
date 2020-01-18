@@ -1,11 +1,13 @@
 package sample.models;
 
-import java.lang.reflect.Array;
+import sample.interfaces.IMoveablePoint;
+
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Bot extends Point
+public class Bot extends Point implements IMoveablePoint
 {
+    private final boolean MOVE_INTELLIGENTLY = true;
     private ArrayList<MoveEnum> preferredMoves = new ArrayList<>();
     private ArrayList<String> movesMade = new ArrayList<>();
     private int movementBoundary;
@@ -24,32 +26,61 @@ public class Bot extends Point
         var possibleMoves = getPossibleMoves();
         if (possibleMoves.contains(direction))
         {
-            executeMove(direction);
+            super.MoveInDirection(direction);
         }
     }
 
+    public MoveEnum DetermineMovement()
+    {
+        MoveEnum move;
+
+        if(MOVE_INTELLIGENTLY)
+        {
+            move = this.DetermineIntelligentMove();
+        }
+        else
+        {
+            move = this.DetermineRandomMove();
+        }
+
+        return move;
+    }
+
+    private MoveEnum DetermineRandomMove()
+    {
+        ArrayList<MoveEnum> currentPossibleMoves = getPossibleMoves();
+        Random randomNumberGenerator = new Random(System.currentTimeMillis());
+        int randomMovementNumber = randomNumberGenerator.nextInt(currentPossibleMoves.size());
+        MoveEnum chosenMove = currentPossibleMoves.get(randomMovementNumber);
+
+        return chosenMove;
+    }
+
     // random bot movement
-    public void MoveRandomly()
+    private MoveEnum DetermineIntelligentMove()
     {
         // Determine which moves are possible, then add them to the list
         ArrayList<MoveEnum> possibleMoves = getPossibleMoves();
         getPreferredMoves();
         Random randomNumberGenerator = new Random(System.currentTimeMillis());
+        MoveEnum move = MoveEnum.Stay;
         if (preferredMoves.size() != 0)
         {
             int randomMovementNumber = randomNumberGenerator.nextInt(preferredMoves.size());
             MoveEnum chosenMove = preferredMoves.get(randomMovementNumber);
             if (possibleMoves.contains(chosenMove)) {
-                executeMove(chosenMove);
+                move = chosenMove;
             }
             preferredMoves.clear();
         }
         else
-            {
-                int randomMovementNumber = randomNumberGenerator.nextInt(possibleMoves.size());
-                MoveEnum chosenMove = possibleMoves.get(randomMovementNumber);
-                executeMove(chosenMove);
-            }
+        {
+            int randomMovementNumber = randomNumberGenerator.nextInt(possibleMoves.size());
+            MoveEnum chosenMove = possibleMoves.get(randomMovementNumber);
+            move = chosenMove;
+        }
+
+        return move;
     }
 
     private void getPreferredMoves()
@@ -127,11 +158,6 @@ public class Bot extends Point
                 }
             }
         }
-        var possibleMoves = getPossibleMoves();
-        Random randomNumberGenerator = new Random(System.currentTimeMillis());
-        int randomMovementNumber = randomNumberGenerator.nextInt(possibleMoves.size());
-        MoveEnum chosenMove = possibleMoves.get(randomMovementNumber);
-        executeMove(chosenMove);
     }
 
     private ArrayList<MoveEnum> getPossibleMoves()
@@ -144,28 +170,5 @@ public class Bot extends Point
         if(this.x != 0) possibleMoves.add(MoveEnum.Left);
 
         return possibleMoves;
-    }
-
-    private void executeMove(MoveEnum direction)
-    {
-        switch (direction)
-        {
-            case Up:
-                --this.y;
-                movesMade.add(this.x + " " + this.y);
-                break;
-            case Right:
-                ++this.x;
-                movesMade.add(this.x + " " + this.y);
-                break;
-            case Down:
-                ++this.y;
-                movesMade.add(this.x + " " + this.y);
-                break;
-            case Left:
-                --this.x;
-                movesMade.add(this.x + " " + this.y);
-                break;
-        }
     }
 }
