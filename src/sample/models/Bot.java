@@ -18,11 +18,11 @@ public class Bot extends Point implements IMoveablePoint
         this.movementBoundary = movementBoundary;
     }
 
-    // made the interface instead to require a moveEnum move
-    // and a no argument moveRandomly
+    // Implementation from IMoveablePoint
+    // Self-checks that the move is possible.
+    @Override
     public void Move(MoveEnum direction)
     {
-        // Determine which moves are possible, then add them to the list
         var possibleMoves = getPossibleMoves();
         if (possibleMoves.contains(direction))
         {
@@ -30,6 +30,9 @@ public class Bot extends Point implements IMoveablePoint
         }
     }
 
+    // Implementation from IMoveablePoint
+    // Determines move based on config values.
+    @Override
     public MoveEnum DetermineMovement()
     {
         MoveEnum move;
@@ -46,6 +49,7 @@ public class Bot extends Point implements IMoveablePoint
         return move;
     }
 
+    // Internal method to determine the next random move.
     private MoveEnum DetermineRandomMove()
     {
         ArrayList<MoveEnum> currentPossibleMoves = getPossibleMoves();
@@ -56,7 +60,7 @@ public class Bot extends Point implements IMoveablePoint
         return chosenMove;
     }
 
-    // random bot movement
+    // Internal method to determine the next move intelligently.
     private MoveEnum DetermineIntelligentMove()
     {
         // Determine which moves are possible, then add them to the list
@@ -83,6 +87,8 @@ public class Bot extends Point implements IMoveablePoint
         return move;
     }
 
+    // Internal move to determine the list of preferred moves.
+    // Used by intelligent move logic.
     private void getPreferredMoves()
     {
         if(this.y != 0)
@@ -160,6 +166,7 @@ public class Bot extends Point implements IMoveablePoint
         }
     }
 
+    // Internal method to determine which moves are possible.
     private ArrayList<MoveEnum> getPossibleMoves()
     {
         ArrayList<MoveEnum> possibleMoves = new ArrayList<MoveEnum>();
