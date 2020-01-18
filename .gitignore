@@ -6,3 +6,6 @@ out/
 
 # IML files
 *.iml
+
+# yml files
+*.yml
