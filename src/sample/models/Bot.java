@@ -1,6 +1,5 @@
 package sample.models;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -32,22 +31,23 @@ public class Bot extends Point
     public void MoveRandomly()
     {
         // Determine which moves are possible, then add them to the list
+        var possibleMoves = getPossibleMoves();
         getPreferredMoves();
         Random randomNumberGenerator = new Random(System.currentTimeMillis());
         if (preferredMoves.size() != 0)
         {
             int randomMovementNumber = randomNumberGenerator.nextInt(preferredMoves.size());
             MoveEnum chosenMove = preferredMoves.get(randomMovementNumber);
-            if (possibleMoves.contains(chosenMove)) {
-                moveTheBot(chosenMove);
-            }
+            if (possibleMoves.contains(chosenMove))
+                Move(chosenMove);
+
             preferredMoves.clear();
         }
         else
             {
                 int randomMovementNumber = randomNumberGenerator.nextInt(possibleMoves.size());
                 MoveEnum chosenMove = possibleMoves.get(randomMovementNumber);
-                moveTheBot(chosenMove);
+                Move(chosenMove);
             }
     }
 
@@ -126,16 +126,11 @@ public class Bot extends Point
                 }
             }
         }
-        var possibleMoves = getPossibleMoves();
-        Random randomNumberGenerator = new Random(System.currentTimeMillis());
-        int randomMovementNumber = randomNumberGenerator.nextInt(possibleMoves.size());
-        MoveEnum chosenMove = possibleMoves.get(randomMovementNumber);
-        executeMove(chosenMove);
     }
 
     private ArrayList<MoveEnum> getPossibleMoves()
     {
-        ArrayList<MoveEnum> possibleMoves = new ArrayList<MoveEnum>();
+        var possibleMoves = new ArrayList<MoveEnum>();
 
         if(this.y != 0) possibleMoves.add(MoveEnum.Up);
         if(this.x != this.movementBoundary - 1) possibleMoves.add(MoveEnum.Right);
