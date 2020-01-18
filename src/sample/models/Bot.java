@@ -11,6 +11,7 @@ public class Bot extends Point implements IMoveablePoint
     private ArrayList<MoveEnum> preferredMoves = new ArrayList<>();
     private ArrayList<String> movesMade = new ArrayList<>();
     private int movementBoundary;
+    private Random randomNumberGenerator = new Random(System.currentTimeMillis());
 
     public Bot(int movementBoundary)
     {
@@ -70,12 +71,11 @@ public class Bot extends Point implements IMoveablePoint
         MoveEnum move = MoveEnum.Stay;
         if (preferredMoves.size() != 0)
         {
-            int randomMovementNumber = randomNumberGenerator.nextInt(preferredMoves.size());
+            int randomMovementNumber = this.randomNumberGenerator.nextInt(preferredMoves.size());
             MoveEnum chosenMove = preferredMoves.get(randomMovementNumber);
             if (possibleMoves.contains(chosenMove)) {
                 move = chosenMove;
             }
-            preferredMoves.clear();
         }
         else
         {
@@ -87,10 +87,10 @@ public class Bot extends Point implements IMoveablePoint
         return move;
     }
 
-    // Internal move to determine the list of preferred moves.
-    // Used by intelligent move logic.
-    private void getPreferredMoves()
+    private ArrayList<MoveEnum> getPreferredMoves()
     {
+        ArrayList<MoveEnum> preferredMoves = new ArrayList<MoveEnum>();
+        // up preferred move
         if(this.y != 0)
         {
             if (movesMade.size() == 0)
@@ -99,17 +99,14 @@ public class Bot extends Point implements IMoveablePoint
             }
             for (String move : movesMade)
             {
-                // extracting x and y
-                int xMove = Integer.parseInt(move.split(" ")[0]);
-                int yMove = Integer.parseInt(move.split(" ")[1]);
-                int proposedY = y-1;
-                if (this.x != xMove || proposedY != yMove)
+                if (this.x != Integer.parseInt(move.split(" ")[0])
+                        || (this.y-1) != Integer.parseInt(move.split(" ")[1]))
                 {
                     preferredMoves.add(MoveEnum.Up);
                 }
             }
         }
-
+        // right preferred move
         if(this.x != this.movementBoundary - 1)
         {
             if (movesMade.size() == 0)
@@ -118,16 +115,14 @@ public class Bot extends Point implements IMoveablePoint
             }
             for (String move : movesMade)
             {
-                // extracting x and y
-                int xMove = Integer.parseInt(move.split(" ")[0]);
-                int yMove = Integer.parseInt(move.split(" ")[1]);
-                int proposedX = x+1;
-                if (proposedX != xMove || this.y != yMove)
+                if ((this.x+1) != Integer.parseInt(move.split(" ")[0])
+                        || this.y != Integer.parseInt(move.split(" ")[1]))
                 {
                     preferredMoves.add(MoveEnum.Right);
                 }
             }
         }
+        // down preferred move
         if(this.y != this.movementBoundary - 1)
         {
             if (movesMade.size() == 0)
@@ -136,16 +131,14 @@ public class Bot extends Point implements IMoveablePoint
             }
             for (String move : movesMade)
             {
-                // extracting x and y
-                int xMove = Integer.parseInt(move.split(" ")[0]);
-                int yMove = Integer.parseInt(move.split(" ")[1]);
-                int proposedY = y+1;
-                if (this.x != xMove || proposedY != yMove)
+                if (this.x != Integer.parseInt(move.split(" ")[0])
+                        || (this.y+1) != Integer.parseInt(move.split(" ")[1]))
                 {
                     preferredMoves.add(MoveEnum.Down);
                 }
             }
         }
+        // left preferred move
         if(this.x != 0)
         {
             if (movesMade.size() == 0)
@@ -154,16 +147,14 @@ public class Bot extends Point implements IMoveablePoint
             }
             for (String move : movesMade)
             {
-                // extracting x and y
-                int xMove = Integer.parseInt(move.split(" ")[0]);
-                int yMove = Integer.parseInt(move.split(" ")[1]);
-                int proposedX = x-1;
-                if (proposedX != xMove || this.y != yMove)
+                if ((this.x-1) != Integer.parseInt(move.split(" ")[0])
+                        || this.y != Integer.parseInt(move.split(" ")[1]))
                 {
                     preferredMoves.add(MoveEnum.Left);
                 }
             }
         }
+        return preferredMoves;
     }
 
     // Internal method to determine which moves are possible.

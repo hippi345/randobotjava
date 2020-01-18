@@ -28,26 +28,6 @@ public class View
         this.gridPane = new GridPane();
     }
 
-    // Joel note
-    // So trying to use get instance kept returning a blank view and so
-    // it was not working correctly
-    // could have been in how I was setting up what was calling it but I was not sure
-    View(int gridSize)
-    {
-        this.gridPane = new GridPane();
-        this.gridSize = gridSize;
-    }
-
-    static View getInstance()
-    {
-        if(instance == null)
-        {
-            instance = new View();
-        }
-
-        return instance;
-    }
-
     // setter for grid size
     private void setGridSize(int gridSize)
     {
@@ -71,6 +51,7 @@ public class View
                 this.gridPane.add(new Text(""), i, j);
             }
         }
+        this.gridPane.setStyle(Constants.LIGHT_BLUE);
     }
 
     // setting up the start screen
@@ -79,6 +60,7 @@ public class View
         // gap between elements in the start screen
         this.gridPane.setHgap(8);
         this.gridPane.setVgap(8);
+        this.gridPane.setStyle(Constants.LIGHT_BLUE);
 
         // elements for the start screen gui stage
         Text handle = new Text("Welcome to the Random Bot Game!");
@@ -155,7 +137,6 @@ public class View
     // startup of the game gui stage
     private void startGameGUI(int parseInt) {
         // creating the new game stage gui and view
-        // Stage mainGame = new Stage();
         View gameView = new View();
         // setting the view grid size
         gameView.setGridSize(parseInt);
