@@ -54,7 +54,6 @@ public class Bot extends Point implements IMoveablePoint
     private MoveEnum DetermineRandomMove()
     {
         ArrayList<MoveEnum> currentPossibleMoves = getPossibleMoves();
-        Random randomNumberGenerator = new Random(System.currentTimeMillis());
         int randomMovementNumber = randomNumberGenerator.nextInt(currentPossibleMoves.size());
         MoveEnum chosenMove = currentPossibleMoves.get(randomMovementNumber);
 
@@ -67,7 +66,6 @@ public class Bot extends Point implements IMoveablePoint
         // Determine which moves are possible, then add them to the list
         ArrayList<MoveEnum> possibleMoves = getPossibleMoves();
         getPreferredMoves();
-        Random randomNumberGenerator = new Random(System.currentTimeMillis());
         MoveEnum move = MoveEnum.Stay;
         if (preferredMoves.size() != 0)
         {
