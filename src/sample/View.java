@@ -11,6 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import sample.interfaces.IPoint;
+import sample.models.MoveEnum;
 import sample.models.Point;
 import java.util.function.Consumer;
 
@@ -182,20 +183,13 @@ public class View
 
     // setting up the button element components of the game gui
     void setupButtons(Consumer<Object> nextFunction, Consumer<Object> resetFunction, Consumer<Object> autoPlayFunction,
-    Consumer<Object> leaveGame, Consumer<Object> upFunction, Consumer<Object> downFunction,
-                      Consumer<Object> leftFunction, Consumer<Object> rightFunction)
+    Consumer<Object> leaveGame)
     {
         // four main buttons
         Button nextPlay = new Button("Next move");
         Button reset = new Button("Reset");
         Button autoPlay = new Button("AutoPlay");
         Button exit = new Button("Leave game");
-
-        // cardinal buttons
-        Button upMovement = new Button("Move Up");
-        Button downMovement = new Button("Move Down");
-        Button leftMovement = new Button("Move Left");
-        Button rightMovement = new Button("Move Right");
 
         // so we have a button for each cardinal movement and then those would go to
         // functions in the Game class *moving over to there*
@@ -204,22 +198,31 @@ public class View
         autoPlay.setOnAction(actionEvent -> autoPlayFunction.accept(null));
         exit.setOnAction(actionEvent -> leaveGame.accept(null));
 
-        // cardinal actions on click
-        upMovement.setOnAction(actionEvent -> upFunction.accept(null));
-        downMovement.setOnAction(actionEvent -> downFunction.accept(null));
-        leftMovement.setOnAction(actionEvent -> leftFunction.accept(null));
-        rightMovement.setOnAction(actionEvent -> rightFunction.accept(null));
-
         // adding the buttons to the grid pane
         gridPane.add(nextPlay,1, gridSize + 1);
         gridPane.add(reset,1, gridSize + 2);
         gridPane.add(autoPlay,1,gridSize + 3);
         gridPane.add(exit, 1, gridSize + 4);
 
+    }
+
+    void setupDirectionButtons(Game game, View gameView)
+    {
+        // cardinal buttons
+        Button upMovement = new Button("Move Up");
+        Button downMovement = new Button("Move Down");
+        Button leftMovement = new Button("Move Left");
+        Button rightMovement = new Button("Move Right");
+
+        upMovement.setOnAction(event -> game.MoveInDirection(MoveEnum.Up));
+        downMovement.setOnAction(event -> game.MoveInDirection(MoveEnum.Down));
+        leftMovement.setOnAction(event -> game.MoveInDirection(MoveEnum.Left));
+        rightMovement.setOnAction(event -> game.MoveInDirection(MoveEnum.Right));
+
         // buttons to the grid pane
-        gridPane.add(upMovement, 1, gridSize + 5);
-        gridPane.add(downMovement, 1, gridSize + 7);
-        gridPane.add(leftMovement, 0, gridSize + 6);
-        gridPane.add(rightMovement, 2, gridSize + 6);
+        gameView.gridPane.add(upMovement, 1, gridSize + 5);
+        gameView.gridPane.add(downMovement, 1, gridSize + 7);
+        gameView.gridPane.add(leftMovement, 0, gridSize + 6);
+        gameView.gridPane.add(rightMovement, 2, gridSize + 6);
     }
 }
