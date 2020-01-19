@@ -95,19 +95,19 @@ public class Bot extends Point implements IMoveablePoint
             switch (move)
             {
                 case Up:
-                    if(!visitedPoints.contains(new Point(this.x, this.y - 1)))
+                    if(!hasVisitedPoint(this.x, this.y - 1))
                         preferredMoves.add(move);
                     break;
                 case Right:
-                    if(!visitedPoints.contains(new Point(this.x + 1, this.y)))
+                    if(!hasVisitedPoint(this.x + 1, this.y))
                         preferredMoves.add(move);
                     break;
                 case Down:
-                    if(!visitedPoints.contains(new Point(this.x, this.y + 1)))
+                    if(!hasVisitedPoint(this.x, this.y + 1))
                         preferredMoves.add(move);
                     break;
                 case Left:
-                    if(!visitedPoints.contains(new Point(this.x - 1, this.y)))
+                    if(!hasVisitedPoint(this.x - 1, this.y))
                         preferredMoves.add(move);
                     break;
             }
@@ -127,5 +127,10 @@ public class Bot extends Point implements IMoveablePoint
         if(this.x != 0) possibleMoves.add(MoveEnum.Left);
 
         return possibleMoves;
+    }
+
+    private boolean hasVisitedPoint(int x, int y)
+    {
+        return visitedPoints.contains(new Point(x, y));
     }
 }
