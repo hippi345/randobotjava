@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.stage.Stage;
 import sample.interfaces.IMoveablePoint;
 import sample.models.Bot;
 import sample.models.MoveEnum;

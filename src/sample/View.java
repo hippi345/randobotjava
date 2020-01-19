@@ -230,7 +230,7 @@ class View
 
     void setupEndScreen(int turnCount)
     {
-        this.mainGame.close();
+        mainGame.close();
         Stage endView = new Stage();
         GridPane endPane = new GridPane();
         Text msg = new Text("Congrats! You found the treasure in " + String.valueOf(turnCount) +
