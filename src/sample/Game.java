@@ -38,25 +38,6 @@ class Game
         // make next move
         ++turnCount;
         System.out.println("Current turn: " + turnCount);
-        // Bot threadBot = this.bot;
-
-        // Joel comment 12/9 - I don't know threads well but I tried but it was not working.
-        // Did not break anything though
-
-        /*Thread botThread = new moveBotThread(this.bot);
-        botThread.start();
-
-        Thread guiThread = new GUIThread(this.bot, this.treasure, view);
-        guiThread.start();*/
-
-        /*Thread movementThread = new Thread(moveTask);
-        movementThread.setDaemon(true);
-        movementThread.start();
-
-        moveTask.setOnSucceeded(e ->
-        {
-            view.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
-        });*/
 
         MoveEnum move = this.bot.DetermineMovement();
         this.bot.Move(move);
@@ -77,43 +58,9 @@ class Game
         return this.bot.equals(this.treasure);
     }
 
-    /*private Task<Void> moveTask = new Task<>() {
-        @Override
-        protected Void call()
-        {
-            threadBot.MoveRandomly();
-            if(treasureIsFound())
-                completeGame();
-            return null;
-        }
-    };*/
-
-    // the below methods move the bot, check for treasure detection
-    // and then adjust the view
-    void moveUp()
+    void MoveInDirection(MoveEnum move)
     {
-        this.bot.Move(MoveEnum.Up);
-        treasureDetection();
-        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
-    }
-
-    void moveDown()
-    {
-        this.bot.Move(MoveEnum.Down);
-        treasureDetection();
-        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
-    }
-
-    void moveLeft()
-    {
-        this.bot.Move(MoveEnum.Left);
-        treasureDetection();
-        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
-    }
-
-    void moveRight()
-    {
-        this.bot.Move(MoveEnum.Right);
+        this.bot.Move(move);
         treasureDetection();
         Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }

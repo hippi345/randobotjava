@@ -9,7 +9,7 @@ public class Main extends Application
 {
     private static Game game;
     static int gridSizeForGame;
-    public static View gameView;
+    static View gameView;
 
     private static Stage startGUI = new Stage();
 
@@ -35,12 +35,9 @@ public class Main extends Application
                 (o) -> game.executeAutoMove(),
                 (o) -> prepareGame(),
                 (o) -> RunAutoPlay(),
-                (o) -> backToStartup(),
-                (o) -> game.moveUp(),
-                (o) -> game.moveDown(),
-                (o) -> game.moveLeft(),
-                (o) -> game.moveRight());
+                (o) -> backToStartup());
 
+        gameView.setupDirectionButtons(game, gameView);
         gameView.adjustBotAndTreasureLocations(game.bot, game.treasure);
     }
 
@@ -48,8 +45,6 @@ public class Main extends Application
     @SuppressWarnings("InfiniteLoopStatement")
     private static void RunAutoPlay()
     {
-        // Matt 1/9 - They're both running on the same thread, we need to figure out how we can have a separate UI thread
-        // so that when we run the logic, it isn't blocking the UI thread.  That's basically what's happening now.
         while(true)
         {
             game.executeAutoMove();
