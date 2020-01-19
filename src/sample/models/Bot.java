@@ -24,7 +24,7 @@ public class Bot extends Point implements IMoveablePoint
     @Override
     public void Move(MoveEnum direction)
     {
-        var possibleMoves = getPossibleMoves();
+        ArrayList<MoveEnum> possibleMoves = getPossibleMoves();
         if (possibleMoves.contains(direction))
         {
             super.MoveInDirection(direction);
