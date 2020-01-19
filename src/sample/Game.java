@@ -1,5 +1,6 @@
 package sample;
 
+import sample.interfaces.IMoveablePoint;
 import sample.models.Bot;
 import sample.models.MoveEnum;
 import sample.models.Treasure;
@@ -9,7 +10,7 @@ class Game
 {
 
     private int turnCount = 0;
-    Bot bot;
+    IMoveablePoint bot;
     Treasure treasure;
 
     // Game constructor
@@ -24,7 +25,7 @@ class Game
     {
         this.treasure.RandomizeLocation(gameView.gridSize);
         this.bot.RandomizeLocation(gameView.gridSize);
-        while(this.bot.getX() == this.treasure.getX() && this.bot.getY() == this.treasure.getY())
+        while(this.bot.equals(this.treasure))
         {
             this.bot.RandomizeLocation(gameView.gridSize);
         }
@@ -57,7 +58,8 @@ class Game
             view.getInstance().adjustBotAndTreasureLocations(this.bot, this.treasure);
         });*/
 
-        this.bot.MoveRandomly();
+        MoveEnum move = this.bot.DetermineMovement();
+        this.bot.Move(move);
         treasureDetection();
         Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
     }
@@ -72,7 +74,7 @@ class Game
     // condition checking for whether the bot is on the treasure location
     private boolean treasureIsFound()
     {
-        return this.bot.getX() == this.treasure.getX() && this.bot.getY() == this.treasure.getY();
+        return this.bot.equals(this.treasure);
     }
 
     /*private Task<Void> moveTask = new Task<>() {

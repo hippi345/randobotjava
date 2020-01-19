@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import sample.interfaces.IPoint;
 import sample.models.Point;
 import java.util.function.Consumer;
 
@@ -154,7 +155,7 @@ public class View
     }
 
     // sets the text on the nodes to reflect the move just made
-    public void adjustBotAndTreasureLocations(Point bot, Point treasure) {
+    public void adjustBotAndTreasureLocations(IPoint bot, IPoint treasure) {
         for (Node node : gridPane.getChildren()) {
             int currentColumnIndex = GridPane.getColumnIndex(node);
             int currentRowIndex = GridPane.getRowIndex(node);
