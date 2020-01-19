@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 // needs an extensive review before moving forward
 public class Main extends Application
 {
-    private static Game game;
+    static Game game;
     static int gridSizeForGame;
     static View gameView;
 
@@ -17,7 +17,7 @@ public class Main extends Application
     public void start(Stage primaryStage)
     {
         View startView = new View();
-        startView.startScreen(startGUI);
+        startView.startScreen(startGUI, game);
 
         // set the stage and start the show
         startGUI.setTitle("Treasure Hunt");
@@ -38,7 +38,7 @@ public class Main extends Application
                 (o) -> backToStartup());
 
         gameView.setupDirectionButtons(game, gameView);
-        gameView.adjustBotAndTreasureLocations(game.bot, game.treasure);
+        gameView.redrawGrid(game.bot, game.treasure);
     }
 
     // run moveBot continually with the warning on infinite loops suppressed
@@ -58,11 +58,11 @@ public class Main extends Application
     }
 
     // method to return the GUI to the main menu
-    public static void backToStartup()
+    static void backToStartup()
     {
         View.mainGame.close();
         View startView = new View();
-        startView.startScreen(startGUI);
+        startView.startScreen(startGUI, game);
         startGUI.show();
     }
 }

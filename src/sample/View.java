@@ -15,7 +15,7 @@ import sample.models.MoveEnum;
 import sample.models.Point;
 import java.util.function.Consumer;
 
-public class View
+class View
 {
     static Stage mainGame;
     private static View instance = null;
@@ -56,7 +56,7 @@ public class View
     }
 
     // setting up the start screen
-    void startScreen(Stage startGUI)
+    void startScreen(Stage startGUI, Game game)
     {
         // gap between elements in the start screen
         this.gridPane.setHgap(8);
@@ -82,7 +82,7 @@ public class View
         });
 
         // button action to start the actual game
-        submitStart.setOnAction(actionEvent -> prepTheGame(defaultBehaviors, gridSizeStart, startGUI));
+        submitStart.setOnAction(actionEvent -> prepTheGame(defaultBehaviors, gridSizeStart, startGUI, game));
         // listener on the checkbox such that the defaults are applied, the text is cleared
         // the checkbox is also checked on the game running for whether to apply defaults or not
         defaultBehaviors.selectedProperty().addListener((observable, oldValue,
@@ -95,7 +95,7 @@ public class View
         this.gridPane.add(submitStart,0,3);
     }
 
-    private void prepTheGame(CheckBox defaults, TextField textInput, Stage startGUI)
+    private void prepTheGame(CheckBox defaults, TextField textInput, Stage startGUI, Game game)
     {
         int gridSize;
             // if defaults are checked then apply the default 5x5 size
@@ -117,7 +117,7 @@ public class View
         // is the central grid pane resource for setting up the game gui
         Main.gridSizeForGame = gridSize;
         // start the actual game gui
-        startGameGUI(gridSize);
+        startGameGUI(gridSize, game);
     }
 
     // creates a pop up GUI stage alerting the user that the number provided exceeds the max so the max was used
@@ -136,7 +136,7 @@ public class View
     }
 
     // startup of the game gui stage
-    private void startGameGUI(int parseInt) {
+    private void startGameGUI(int parseInt, Game game) {
         // creating the new game stage gui and view
         View gameView = new View();
         // setting the view grid size
@@ -145,8 +145,10 @@ public class View
         Main.gameView = gameView;
         // preparation of the game components for movement and treasure hunting
         Main.prepareGame();
+        redrawGrid(Main.game.bot, Main.game.treasure);
         // establishes the actual View for the game which is managed in the View class
         Main.setupView(gameView);
+        // redrawGrid(Main.game.bot, Main.game.treasure);
         // size based on arg algorithm
         double size = (13.0 * Math.pow(parseInt,2)) + 50;
         // set the stage and start the show
@@ -156,7 +158,7 @@ public class View
     }
 
     // sets the text on the nodes to reflect the move just made
-    public void adjustBotAndTreasureLocations(IPoint bot, IPoint treasure) {
+    void redrawGrid(IPoint bot, IPoint treasure) {
         for (Node node : gridPane.getChildren()) {
             int currentColumnIndex = GridPane.getColumnIndex(node);
             int currentRowIndex = GridPane.getRowIndex(node);
@@ -226,9 +228,9 @@ public class View
         gameView.gridPane.add(rightMovement, 2, gridSize + 6);
     }
 
-    public void setupEndScreen(int turnCount)
+    void setupEndScreen(int turnCount)
     {
-        View.mainGame.close();
+        this.mainGame.close();
         Stage endView = new Stage();
         GridPane endPane = new GridPane();
         Text msg = new Text("Congrats! You found the treasure in " + String.valueOf(turnCount) +

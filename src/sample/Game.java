@@ -29,7 +29,7 @@ class Game
         {
             this.bot.RandomizeLocation(gameView.gridSize);
         }
-        gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
+        // gameView.redrawGrid(this.bot, this.treasure);
     }
 
     // auto move execution
@@ -42,7 +42,7 @@ class Game
         MoveEnum move = this.bot.DetermineMovement();
         this.bot.Move(move);
         treasureDetection();
-        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
+        Main.gameView.redrawGrid(this.bot, this.treasure);
     }
 
     // actions on completion of the game
@@ -50,6 +50,7 @@ class Game
     {
         System.out.println("you found the treasure!");
         Main.gameView.setupEndScreen(this.turnCount);
+        System.exit(69);
     }
 
     // condition checking for whether the bot is on the treasure location
@@ -62,7 +63,7 @@ class Game
     {
         this.bot.Move(move);
         treasureDetection();
-        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
+        Main.gameView.redrawGrid(this.bot, this.treasure);
     }
 
     // treasure detection
