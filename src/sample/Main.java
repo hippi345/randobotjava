@@ -58,7 +58,7 @@ public class Main extends Application
     }
 
     // method to return the GUI to the main menu
-    private static void backToStartup()
+    public static void backToStartup()
     {
         View.mainGame.close();
         View startView = new View();

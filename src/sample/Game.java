@@ -46,10 +46,10 @@ class Game
     }
 
     // actions on completion of the game
-    private static void completeGame()
+    private void completeGame()
     {
         System.out.println("you found the treasure!");
-        System.exit(69);
+        Main.gameView.setupEndScreen(this.turnCount);
     }
 
     // condition checking for whether the bot is on the treasure location

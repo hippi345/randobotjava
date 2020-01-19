@@ -225,4 +225,25 @@ public class View
         gameView.gridPane.add(leftMovement, 0, gridSize + 6);
         gameView.gridPane.add(rightMovement, 2, gridSize + 6);
     }
+
+    public void setupEndScreen(int turnCount)
+    {
+        View.mainGame.close();
+        Stage endView = new Stage();
+        GridPane endPane = new GridPane();
+        Text msg = new Text("Congrats! You found the treasure in " + String.valueOf(turnCount) +
+                " " + "turns! Would you like to play another game or exit?");
+        Button continueAgain = new Button("Continue");
+        Button exit = new Button("Exit");
+
+        // setting up the button actions
+        continueAgain.setOnAction(event -> Main.backToStartup());
+        exit.setOnAction(event -> {System.exit(69);});
+
+        endPane.add(msg,0,0);
+        endPane.add(continueAgain, 0, 1);
+        endPane.add(exit, 0, 2);
+        endView.setScene(new Scene(endPane,150,150));
+        endView.show();
+    }
 }
