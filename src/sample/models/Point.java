@@ -21,6 +21,12 @@ public class Point implements IPoint
          this.y = y;
      }
 
+     public Point(IPoint p)
+     {
+         this.x = p.getX();
+         this.y = p.getY();
+     }
+
      @Override
      public boolean equals(Object o)
      {

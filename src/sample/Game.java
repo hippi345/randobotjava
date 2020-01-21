@@ -1,8 +1,10 @@
 package sample;
 
 import sample.interfaces.IMoveablePoint;
+import sample.interfaces.IPoint;
 import sample.models.Bot;
 import sample.models.MoveEnum;
+import sample.models.Point;
 import sample.models.Treasure;
 
 // class for the game components
@@ -29,7 +31,7 @@ class Game
         {
             this.bot.RandomizeLocation(gameView.gridSize);
         }
-        gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
+        gameView.adjustBotAndTreasureLocations(null, this.bot, this.treasure);
     }
 
     // auto move execution
@@ -40,9 +42,11 @@ class Game
         System.out.println("Current turn: " + turnCount);
 
         MoveEnum move = this.bot.DetermineMovement();
+
+        IPoint previousBotPoint = new Point(this.bot);
         this.bot.Move(move);
         treasureDetection();
-        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
+        Main.gameView.adjustBotAndTreasureLocations(previousBotPoint, this.bot, this.treasure);
     }
 
     // actions on completion of the game
@@ -60,9 +64,10 @@ class Game
 
     void MoveInDirection(MoveEnum move)
     {
+        IPoint previousBotPoint = new Point(this.bot);
         this.bot.Move(move);
         treasureDetection();
-        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
+        Main.gameView.adjustBotAndTreasureLocations(previousBotPoint, this.bot, this.treasure);
     }
 
     // treasure detection

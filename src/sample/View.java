@@ -13,6 +13,9 @@ import javafx.stage.Stage;
 import sample.interfaces.IPoint;
 import sample.models.MoveEnum;
 import sample.models.Point;
+
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.function.Consumer;
 
 public class View
@@ -21,6 +24,7 @@ public class View
     private static View instance = null;
     GridPane gridPane;
     int gridSize = Constants.DEFAULT_GRIDSIZE;
+    Hashtable<IPoint, Node> _pointNodeMap = new Hashtable<>();
 
     // Constructor must be private for the Singleton pattern.
     View()
@@ -40,6 +44,7 @@ public class View
         this.gridPane.setHgap(8);
         this.gridPane.setVgap(8);
         setupGUI();
+        SetupMatrixMap();
     }
 
     // sets up the labels from the grid size passed into the command line
@@ -143,10 +148,16 @@ public class View
         gameView.setGridSize(parseInt);
         // setting the main game view to a fresh game view
         Main.gameView = gameView;
+        // establishes the actual View for the game which is managed in the View class
+
+        // creation of the grid pane
+        gameView.setupTheGridPane();
+
         // preparation of the game components for movement and treasure hunting
         Main.prepareGame();
-        // establishes the actual View for the game which is managed in the View class
+
         Main.setupView(gameView);
+
         // size based on arg algorithm
         double size = (13.0 * Math.pow(parseInt,2)) + 50;
         // set the stage and start the show
@@ -155,29 +166,35 @@ public class View
         mainGame.show();
     }
 
-    // sets the text on the nodes to reflect the move just made
-    public void adjustBotAndTreasureLocations(IPoint bot, IPoint treasure) {
+    private void SetupMatrixMap()
+    {
         for (Node node : gridPane.getChildren()) {
             int currentColumnIndex = GridPane.getColumnIndex(node);
             int currentRowIndex = GridPane.getRowIndex(node);
 
             if(node instanceof Text)
             {
-                String textToSet  = "";
-                if(bot.getX() == currentColumnIndex && bot.getY() == currentRowIndex)
-                {
-                    textToSet = bot.getX() + " " + bot.getY() + " " + " bot";
-                }
-                else if(treasure.getX() == currentColumnIndex && treasure.getY() == currentRowIndex)
-                {
-                    textToSet = treasure.getX() + " " + treasure.getY() + " " + " treasure";
-                }
-                else
-                {
-                    textToSet = currentColumnIndex + " " + currentRowIndex + " empty";
-                }
-                ((Text) node).setText(textToSet);
+                ((Text) node).setText(currentColumnIndex + " " + currentRowIndex + " empty");
+                _pointNodeMap.put(new Point(currentColumnIndex, currentRowIndex), node);
             }
+        }
+    }
+
+    // sets the text on the nodes to reflect the move just made
+    public void adjustBotAndTreasureLocations(IPoint previousBotPosition, IPoint currentBotPosition, IPoint treasurePosition) {
+        if(previousBotPosition != null)
+        {
+            Node previousNode = _pointNodeMap.get(previousBotPosition);
+            ((Text)previousNode).setText(previousBotPosition.getX() + " " + previousBotPosition.getY() + " empty");
+        }
+
+        Node currentBotNode = _pointNodeMap.get(currentBotPosition);
+        ((Text)currentBotNode).setText(currentBotPosition.getX() + " " + currentBotPosition.getY() + " bot");
+
+        Node treasureNode = _pointNodeMap.get(treasurePosition);
+        if(treasureNode != currentBotNode)
+        {
+            ((Text)treasureNode).setText(treasurePosition.getX() + " " + treasurePosition.getY() + " treasure");
         }
     }
 
