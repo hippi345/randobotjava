@@ -45,7 +45,7 @@ public class Main extends Application
     @SuppressWarnings("InfiniteLoopStatement")
     private static void RunAutoPlay()
     {
-        while(true)
+        while(!Constants.GAME_COMPLETE)
         {
             game.executeAutoMove();
         }

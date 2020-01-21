@@ -7,4 +7,6 @@ class Constants {
 
     // colors
     static String LIGHT_BLUE = "-fx-background-color:#00BFFF; -fx-opacity:1;";
+
+    static  boolean GAME_COMPLETE = false;
 }

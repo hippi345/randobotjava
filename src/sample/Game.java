@@ -42,17 +42,15 @@ class Game
 
         MoveEnum move = this.bot.DetermineMovement();
         this.bot.Move(move);
-        treasureDetection(true);
+        treasureDetection();
         Main.gameView.redrawGrid(this.bot, this.treasure);
     }
 
     // actions on completion of the game
-    private void completeGame(boolean autoplay)
+    private void completeGame()
     {
         System.out.println("you found the treasure!");
         Main.gameView.setupEndScreen(this.turnCount);
-        if (autoplay)
-            System.exit(69);
     }
 
     // condition checking for whether the bot is on the treasure location
@@ -64,14 +62,16 @@ class Game
     void MoveInDirection(MoveEnum move)
     {
         this.bot.Move(move);
-        treasureDetection(false);
+        treasureDetection();
         Main.gameView.redrawGrid(this.bot, this.treasure);
     }
 
     // treasure detection
-    private void treasureDetection(boolean autoplay)
+    private void treasureDetection()
     {
-        if(treasureIsFound())
-            completeGame(autoplay);
+        if(treasureIsFound()) {
+            Constants.GAME_COMPLETE = true;
+            completeGame();
+        }
     }
 }
