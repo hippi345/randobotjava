@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import sample.interfaces.IGame;
 import sample.interfaces.IPoint;
 import sample.models.MoveEnum;
 import sample.models.Point;
@@ -223,7 +224,7 @@ public class View
 
     }
 
-    void setupDirectionButtons(Game game, View gameView)
+    void setupDirectionButtons(IGame game, View gameView)
     {
         // cardinal buttons
         Button upMovement = new Button("Move Up");
@@ -231,10 +232,10 @@ public class View
         Button leftMovement = new Button("Move Left");
         Button rightMovement = new Button("Move Right");
 
-        upMovement.setOnAction(event -> game.MoveInDirection(MoveEnum.Up));
-        downMovement.setOnAction(event -> game.MoveInDirection(MoveEnum.Down));
-        leftMovement.setOnAction(event -> game.MoveInDirection(MoveEnum.Left));
-        rightMovement.setOnAction(event -> game.MoveInDirection(MoveEnum.Right));
+        upMovement.setOnAction(event -> game.MakeMove(MoveEnum.Up));
+        downMovement.setOnAction(event -> game.MakeMove(MoveEnum.Down));
+        leftMovement.setOnAction(event -> game.MakeMove(MoveEnum.Left));
+        rightMovement.setOnAction(event -> game.MakeMove(MoveEnum.Right));
 
         // buttons to the grid pane
         gameView.gridPane.add(upMovement, 1, gridSize + 5);
