@@ -81,31 +81,17 @@ class Game implements IGame
         ++turnCount;
         System.out.println("Current turn: " + turnCount);
 
-        MoveEnum move = this.bot.DetermineMovement();
-
         IPoint previousBotPoint = new Point(this.bot);
-        this.bot.Move(move);
-        treasureDetection();
-        Main.gameView.adjustBotAndTreasureLocations(previousBotPoint, this.bot, this.treasure);
-    }
+        this.bot.Move(botMovementDirection);
 
         DetermineCurrentStatus();
-
-        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
+        Main.gameView.adjustBotAndTreasureLocations(previousBotPoint, this.bot, this.treasure);
     }
 
     // condition checking for whether the bot is on the treasure location
     private boolean treasureIsFound()
     {
         return this.bot.equals(this.treasure);
-    }
-
-    void MoveInDirection(MoveEnum move)
-    {
-        IPoint previousBotPoint = new Point(this.bot);
-        this.bot.Move(move);
-        treasureDetection();
-        Main.gameView.adjustBotAndTreasureLocations(previousBotPoint, this.bot, this.treasure);
     }
 
     private void DetermineCurrentStatus()
