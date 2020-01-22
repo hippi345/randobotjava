@@ -29,9 +29,6 @@ public class Main extends Application
 
     static void setupView(View gameView)
     {
-        // creation of the grid pane
-        gameView.setupTheGridPane();
-
         // setting up the buttons which go into the UI
         gameView.setupButtons(
                 (o) -> game.MakeMove(),
@@ -40,7 +37,6 @@ public class Main extends Application
                 (o) -> backToStartup());
 
         gameView.setupDirectionButtons(game, gameView);
-        gameView.adjustBotAndTreasureLocations(game.getBot(), game.getTreasure());
     }
 
     // run moveBot continually with the warning on infinite loops suppressed

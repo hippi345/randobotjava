@@ -6,6 +6,7 @@ import sample.interfaces.IPoint;
 import sample.models.Bot;
 import sample.models.GameStatusEnum;
 import sample.models.MoveEnum;
+import sample.models.Point;
 import sample.models.Treasure;
 
 // class for the game components
@@ -67,7 +68,7 @@ class Game implements IGame
         {
             this.bot.RandomizeLocation(gameView.gridSize);
         }
-        gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
+        gameView.adjustBotAndTreasureLocations(null, this.bot, this.treasure);
     }
 
     // auto move execution
@@ -80,12 +81,11 @@ class Game implements IGame
         ++turnCount;
         System.out.println("Current turn: " + turnCount);
 
-        // make next move
+        IPoint previousBotPoint = new Point(this.bot);
         this.bot.Move(botMovementDirection);
 
         DetermineCurrentStatus();
-
-        Main.gameView.adjustBotAndTreasureLocations(this.bot, this.treasure);
+        Main.gameView.adjustBotAndTreasureLocations(previousBotPoint, this.bot, this.treasure);
     }
 
     // condition checking for whether the bot is on the treasure location
