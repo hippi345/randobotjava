@@ -3,13 +3,13 @@ package sample.models;
 import sample.interfaces.IMoveablePoint;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 
 public class Bot extends Point implements IMoveablePoint
 {
     private final boolean MOVE_INTELLIGENTLY = true;
-    private ArrayList<MoveEnum> preferredMoves = new ArrayList<>();
-    private ArrayList<String> movesMade = new ArrayList<>();
+    private HashSet<Point> visitedPoints = new HashSet<>();
     private int movementBoundary;
     private Random randomNumberGenerator = new Random(System.currentTimeMillis());
 
@@ -28,6 +28,7 @@ public class Bot extends Point implements IMoveablePoint
         if (possibleMoves.contains(direction))
         {
             super.MoveInDirection(direction);
+            this.visitedPoints.add(new Point(this.x, this.y));
         }
     }
 
@@ -65,7 +66,7 @@ public class Bot extends Point implements IMoveablePoint
     {
         // Determine which moves are possible, then add them to the list
         ArrayList<MoveEnum> possibleMoves = getPossibleMoves();
-        ArrayList<MoveEnum> preferredMoves = getPreferredMoves();
+        ArrayList<MoveEnum> preferredMoves = getPreferredMoves(possibleMoves);
         MoveEnum move = MoveEnum.Stay;
         if (preferredMoves.size() != 0)
         {
@@ -85,73 +86,33 @@ public class Bot extends Point implements IMoveablePoint
         return move;
     }
 
-    private ArrayList<MoveEnum> getPreferredMoves()
+    private ArrayList<MoveEnum> getPreferredMoves(Iterable<MoveEnum> possibleMoves)
     {
-        ArrayList<MoveEnum> preferredMoves = new ArrayList<MoveEnum>();
-        // up preferred move
-        if(this.y != 0)
+        ArrayList<MoveEnum> preferredMoves = new ArrayList<>();
+
+        for (MoveEnum move : possibleMoves)
         {
-            if (movesMade.size() == 0)
+            switch (move)
             {
-                preferredMoves.add(MoveEnum.Up);
-            }
-            for (String move : movesMade)
-            {
-                if (this.x != Integer.parseInt(move.split(" ")[0])
-                        || (this.y-1) != Integer.parseInt(move.split(" ")[1]))
-                {
-                    preferredMoves.add(MoveEnum.Up);
-                }
+                case Up:
+                    if(!hasVisitedPoint(this.x, this.y - 1))
+                        preferredMoves.add(move);
+                    break;
+                case Right:
+                    if(!hasVisitedPoint(this.x + 1, this.y))
+                        preferredMoves.add(move);
+                    break;
+                case Down:
+                    if(!hasVisitedPoint(this.x, this.y + 1))
+                        preferredMoves.add(move);
+                    break;
+                case Left:
+                    if(!hasVisitedPoint(this.x - 1, this.y))
+                        preferredMoves.add(move);
+                    break;
             }
         }
-        // right preferred move
-        if(this.x != this.movementBoundary - 1)
-        {
-            if (movesMade.size() == 0)
-            {
-                preferredMoves.add(MoveEnum.Right);
-            }
-            for (String move : movesMade)
-            {
-                if ((this.x+1) != Integer.parseInt(move.split(" ")[0])
-                        || this.y != Integer.parseInt(move.split(" ")[1]))
-                {
-                    preferredMoves.add(MoveEnum.Right);
-                }
-            }
-        }
-        // down preferred move
-        if(this.y != this.movementBoundary - 1)
-        {
-            if (movesMade.size() == 0)
-            {
-                preferredMoves.add(MoveEnum.Down);
-            }
-            for (String move : movesMade)
-            {
-                if (this.x != Integer.parseInt(move.split(" ")[0])
-                        || (this.y+1) != Integer.parseInt(move.split(" ")[1]))
-                {
-                    preferredMoves.add(MoveEnum.Down);
-                }
-            }
-        }
-        // left preferred move
-        if(this.x != 0)
-        {
-            if (movesMade.size() == 0)
-            {
-                preferredMoves.add(MoveEnum.Left);
-            }
-            for (String move : movesMade)
-            {
-                if ((this.x-1) != Integer.parseInt(move.split(" ")[0])
-                        || this.y != Integer.parseInt(move.split(" ")[1]))
-                {
-                    preferredMoves.add(MoveEnum.Left);
-                }
-            }
-        }
+
         return preferredMoves;
     }
 
@@ -166,5 +127,10 @@ public class Bot extends Point implements IMoveablePoint
         if(this.x != 0) possibleMoves.add(MoveEnum.Left);
 
         return possibleMoves;
+    }
+
+    private boolean hasVisitedPoint(int x, int y)
+    {
+        return visitedPoints.contains(new Point(x, y));
     }
 }
