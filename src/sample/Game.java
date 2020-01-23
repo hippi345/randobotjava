@@ -86,6 +86,13 @@ class Game implements IGame
 
         DetermineCurrentStatus();
         Main.gameView.adjustBotAndTreasureLocations(previousBotPoint, this.bot, this.treasure);
+        if (_status == GameStatusEnum.Complete)
+        {
+            System.out.println("You found the treasure!");
+            Main.startGUI.close();
+            Main.backToStartup();
+            // System.exit(69);
+        }
     }
 
     // condition checking for whether the bot is on the treasure location
