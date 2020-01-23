@@ -30,7 +30,6 @@ class Game
         {
             this.bot.RandomizeLocation(gameView.gridSize);
         }
-        // gameView.redrawGrid(this.bot, this.treasure);
     }
 
     // auto move execution
