@@ -19,7 +19,7 @@ public class Main extends Application
     public void start(Stage primaryStage)
     {
         View startView = new View();
-        startView.startScreen(startGUI, game);
+        startView.startScreen(startGUI, (Game) game);
 
         // set the stage and start the show
         startGUI.setTitle("Treasure Hunt");
@@ -59,7 +59,7 @@ public class Main extends Application
     {
         View.mainGame.close();
         View startView = new View();
-        startView.startScreen(startGUI, game);
+        startView.startScreen(startGUI, (Game) game);
         startGUI.show();
     }
 }

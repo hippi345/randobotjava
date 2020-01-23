@@ -237,6 +237,6 @@ class View
           gameView.gridPane.add(upMovement, 1, gridSize + 5);
           gameView.gridPane.add(downMovement, 1, gridSize + 7);
           gameView.gridPane.add(leftMovement, 0, gridSize + 6);
-          gameView.gridPane.add(rightMovement, 2, gridSize + 6);Stora
+          gameView.gridPane.add(rightMovement, 2, gridSize + 6);
       }
 }
