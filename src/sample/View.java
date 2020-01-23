@@ -154,8 +154,8 @@ class View
         gameView.setupTheGridPane();
 
         // preparation of the game components for movement and treasure hunting
-        Main.prepareGame();
-        Main.setupView(gameView);
+        Game.prepareGame();
+        View.setupView(gameView);
 
         // size based on arg algorithm
         double size = (13.0 * Math.pow(parseInt,2)) + 50;
@@ -270,5 +270,17 @@ class View
 
         endGameGUI.setScene(new Scene(endPane, 300, 300));
         endGameGUI.show();
+    }
+
+    public static void setupView(View gameView)
+    {
+        // setting up the buttons which go into the UI
+        gameView.setupButtons(
+                (o) -> Main.game.MakeMove(),
+                (o) -> Game.prepareGame(),
+                (o) -> Game.RunAutoPlay(),
+                (o) -> Main.backToStartup());
+
+        gameView.setupDirectionButtons(Main.game, gameView);
     }
 }

@@ -92,7 +92,6 @@ class Game implements IGame
         {
             System.out.println("You found the treasure!");
             Thread currThreadOutside = Thread.currentThread();
-            System.out.println(currThreadOutside.toString());
 
             Task task = new Task<Void>()
             {
@@ -106,7 +105,7 @@ class Game implements IGame
             };
             Thread thread = new Thread(task);
             thread.start();
-            
+
             View.setupEndGameGUI();
         }
     }
@@ -123,5 +122,20 @@ class Game implements IGame
         {
             _status = GameStatusEnum.Complete;
         }
+    }
+
+    // run moveBot continually with the warning on infinite loops suppressed
+    @SuppressWarnings("InfiniteLoopStatement")
+    public static void RunAutoPlay()
+    {
+        while(Main.game.GetStatus() != GameStatusEnum.Complete)
+        {
+            Main.game.MakeMove();
+        }
+    }
+
+    // sets up the Game object with bot and treasure objects in place with coordinates on the grid
+    public static void prepareGame() {
+        Main.game = new Game(Main.gridSizeForGame, Main.gameView);
     }
 }
