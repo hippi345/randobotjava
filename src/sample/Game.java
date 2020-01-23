@@ -89,7 +89,6 @@ class Game implements IGame
         if (_status == GameStatusEnum.Complete)
         {
             System.out.println("You found the treasure!");
-            Main.startGUI.close();
             View.setupEndGameGUI();
         }
     }
