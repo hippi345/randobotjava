@@ -1,5 +1,7 @@
 package sample;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.stage.Stage;
 import sample.interfaces.IGame;
 import sample.interfaces.IMoveablePoint;
@@ -89,6 +91,22 @@ class Game implements IGame
         if (_status == GameStatusEnum.Complete)
         {
             System.out.println("You found the treasure!");
+            Thread currThreadOutside = Thread.currentThread();
+            System.out.println(currThreadOutside.toString());
+
+            Task task = new Task<Void>()
+            {
+                @Override public Void call()
+                {
+                    Main.startGUI.close();
+                    Thread currThreadOutside = Thread.currentThread();
+                    System.out.println(currThreadOutside.toString());
+                    return null;
+                }
+            };
+            Thread thread = new Thread(task);
+            thread.start();
+            
             View.setupEndGameGUI();
         }
     }
