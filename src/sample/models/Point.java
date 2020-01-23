@@ -21,11 +21,35 @@ public class Point implements IPoint
          this.y = y;
      }
 
-     public boolean equals(Point p)
+     public Point(IPoint p)
      {
-         if(p == null)
+         this.x = p.getX();
+         this.y = p.getY();
+     }
+
+     @Override
+     public boolean equals(Object o)
+     {
+         if (this == o)
+         {
+             return true;
+         }
+
+         if(o == null || !(o instanceof Point))
+         {
              return false;
+         }
+
+         Point p = (Point) o;
+
          return p.x == this.x && p.y == this.y;
+     }
+
+     @Override
+     public int hashCode()
+     {
+         String hashString = this.x + "," + this.y;
+         return hashString.hashCode();
      }
 
      public void RandomizeLocation(int bound)

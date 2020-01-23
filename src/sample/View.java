@@ -10,9 +10,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import sample.interfaces.IGame;
 import sample.interfaces.IPoint;
 import sample.models.MoveEnum;
 import sample.models.Point;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.function.Consumer;
 
 class View
@@ -21,6 +24,7 @@ class View
     private static View instance = null;
     GridPane gridPane;
     int gridSize = Constants.DEFAULT_GRIDSIZE;
+    Hashtable<IPoint, Node> _pointNodeMap = new Hashtable<>();
 
     // Constructor must be private for the Singleton pattern.
     View()
@@ -40,6 +44,7 @@ class View
         this.gridPane.setHgap(8);
         this.gridPane.setVgap(8);
         setupGUI();
+        SetupMatrixMap();
     }
 
     // sets up the labels from the grid size passed into the command line
@@ -143,12 +148,15 @@ class View
         gameView.setGridSize(parseInt);
         // setting the main game view to a fresh game view
         Main.gameView = gameView;
+        // establishes the actual View for the game which is managed in the View class
+
+        // creation of the grid pane
+        gameView.setupTheGridPane();
+
         // preparation of the game components for movement and treasure hunting
         Main.prepareGame();
-        redrawGrid(Main.game.bot, Main.game.treasure);
-        // establishes the actual View for the game which is managed in the View class
         Main.setupView(gameView);
-        // redrawGrid(Main.game.bot, Main.game.treasure);
+
         // size based on arg algorithm
         double size = (13.0 * Math.pow(parseInt,2)) + 50;
         // set the stage and start the show
@@ -157,29 +165,35 @@ class View
         mainGame.show();
     }
 
-    // sets the text on the nodes to reflect the move just made
-    void redrawGrid(IPoint bot, IPoint treasure) {
+    private void SetupMatrixMap()
+    {
         for (Node node : gridPane.getChildren()) {
             int currentColumnIndex = GridPane.getColumnIndex(node);
             int currentRowIndex = GridPane.getRowIndex(node);
 
             if(node instanceof Text)
             {
-                String textToSet  = "";
-                if(bot.getX() == currentColumnIndex && bot.getY() == currentRowIndex)
-                {
-                    textToSet = bot.getX() + " " + bot.getY() + " " + " bot";
-                }
-                else if(treasure.getX() == currentColumnIndex && treasure.getY() == currentRowIndex)
-                {
-                    textToSet = treasure.getX() + " " + treasure.getY() + " " + " treasure";
-                }
-                else
-                {
-                    textToSet = currentColumnIndex + " " + currentRowIndex + " empty";
-                }
-                ((Text) node).setText(textToSet);
+                ((Text) node).setText(currentColumnIndex + " " + currentRowIndex + " empty");
+                _pointNodeMap.put(new Point(currentColumnIndex, currentRowIndex), node);
             }
+        }
+    }
+
+    // sets the text on the nodes to reflect the move just made
+    public void adjustBotAndTreasureLocations(IPoint previousBotPosition, IPoint currentBotPosition, IPoint treasurePosition) {
+        if(previousBotPosition != null)
+        {
+            Node previousNode = _pointNodeMap.get(previousBotPosition);
+            ((Text)previousNode).setText(previousBotPosition.getX() + " " + previousBotPosition.getY() + " empty");
+        }
+
+        Node currentBotNode = _pointNodeMap.get(currentBotPosition);
+        ((Text)currentBotNode).setText(currentBotPosition.getX() + " " + currentBotPosition.getY() + " bot");
+
+        Node treasureNode = _pointNodeMap.get(treasurePosition);
+        if(treasureNode != currentBotNode)
+        {
+            ((Text)treasureNode).setText(treasurePosition.getX() + " " + treasurePosition.getY() + " treasure");
         }
     }
 
@@ -207,45 +221,22 @@ class View
         gridPane.add(exit, 1, gridSize + 4);
 
     }
+    void setupDirectionButtons(IGame game, View gameView)
+      {
+          // cardinal buttons
+          Button upMovement = new Button("Move Up");
+          Button downMovement = new Button("Move Down");
+          Button leftMovement = new Button("Move Left");
+          Button rightMovement = new Button("Move Right");
+          upMovement.setOnAction(event -> game.MakeMove(MoveEnum.Up));
+          downMovement.setOnAction(event -> game.MakeMove(MoveEnum.Down));
+          leftMovement.setOnAction(event -> game.MakeMove(MoveEnum.Left));
+          rightMovement.setOnAction(event -> game.MakeMove(MoveEnum.Right));
 
-    void setupDirectionButtons(Game game, View gameView)
-    {
-        // cardinal buttons
-        Button upMovement = new Button("Move Up");
-        Button downMovement = new Button("Move Down");
-        Button leftMovement = new Button("Move Left");
-        Button rightMovement = new Button("Move Right");
-
-        upMovement.setOnAction(event -> game.MoveInDirection(MoveEnum.Up));
-        downMovement.setOnAction(event -> game.MoveInDirection(MoveEnum.Down));
-        leftMovement.setOnAction(event -> game.MoveInDirection(MoveEnum.Left));
-        rightMovement.setOnAction(event -> game.MoveInDirection(MoveEnum.Right));
-
-        // buttons to the grid pane
-        gameView.gridPane.add(upMovement, 1, gridSize + 5);
-        gameView.gridPane.add(downMovement, 1, gridSize + 7);
-        gameView.gridPane.add(leftMovement, 0, gridSize + 6);
-        gameView.gridPane.add(rightMovement, 2, gridSize + 6);
-    }
-
-    void setupEndScreen(int turnCount)
-    {
-        mainGame.close();
-        Stage endView = new Stage();
-        GridPane endPane = new GridPane();
-        Text msg = new Text("Congrats! You found the treasure in " + String.valueOf(turnCount) +
-                " " + "turns! Would you like to play another game or exit?");
-        Button continueAgain = new Button("Continue");
-        Button exit = new Button("Exit");
-
-        // setting up the button actions
-        continueAgain.setOnAction(event -> Main.backToStartup());
-        exit.setOnAction(event -> {System.exit(69);});
-
-        endPane.add(msg,0,0);
-        endPane.add(continueAgain, 0, 1);
-        endPane.add(exit, 0, 2);
-        endView.setScene(new Scene(endPane,150,150));
-        endView.show();
-    }
+          // buttons to the grid pane
+          gameView.gridPane.add(upMovement, 1, gridSize + 5);
+          gameView.gridPane.add(downMovement, 1, gridSize + 7);
+          gameView.gridPane.add(leftMovement, 0, gridSize + 6);
+          gameView.gridPane.add(rightMovement, 2, gridSize + 6);Stora
+      }
 }
