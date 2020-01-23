@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.concurrent.Task;
 import sample.interfaces.IGame;
 import sample.interfaces.IMoveablePoint;
 import sample.interfaces.IPoint;
@@ -23,7 +24,6 @@ class Game implements IGame
         _status = GameStatusEnum.NotStarted;
         this.bot = new Bot(gridSizePassed);
         this.treasure = new Treasure();
-
         InitializeGame(gameView);
     }
 
@@ -76,16 +76,33 @@ class Game implements IGame
     {
         // Set status
         if(_status == GameStatusEnum.Complete) return;
-        else if(_status == GameStatusEnum.NotStarted) _status = GameStatusEnum.InProgress;
+        else if(_status == GameStatusEnum.NotStarted)
+            _status = GameStatusEnum.InProgress;
 
         ++turnCount;
         System.out.println("Current turn: " + turnCount);
-
         IPoint previousBotPoint = new Point(this.bot);
         this.bot.Move(botMovementDirection);
 
         DetermineCurrentStatus();
         Main.gameView.adjustBotAndTreasureLocations(previousBotPoint, this.bot, this.treasure);
+        if (_status == GameStatusEnum.Complete)
+        {
+            System.out.println("You found the treasure!");
+            Task task = new Task<Void>()
+            {
+                @Override public Void call()
+                {
+                    Main.startGUI.close();
+                    Thread currThreadOutside = Thread.currentThread();
+                    System.out.println(currThreadOutside.toString());
+                    return null;
+                }
+            };
+            Thread thread = new Thread(task);
+            thread.start();
+            View.setupEndGameGUI();
+        }
     }
 
     // condition checking for whether the bot is on the treasure location
@@ -96,9 +113,24 @@ class Game implements IGame
 
     private void DetermineCurrentStatus()
     {
-        if(treasureIsFound())
+        if (treasureIsFound())
         {
             _status = GameStatusEnum.Complete;
         }
+    }
+
+    // run moveBot continually with the warning on infinite loops suppressed
+    @SuppressWarnings("InfiniteLoopStatement")
+    static void RunAutoPlay()
+    {
+        while(Main.game.GetStatus() != GameStatusEnum.Complete)
+        {
+            Main.game.MakeMove();
+        }
+    }
+
+    // sets up the Game object with bot and treasure objects in place with coordinates on the grid
+    static void prepareGame() {
+        Main.game = new Game(Main.gridSizeForGame, Main.gameView);
     }
 }

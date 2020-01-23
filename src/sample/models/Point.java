@@ -35,13 +35,11 @@ public class Point implements IPoint
              return true;
          }
 
-         if(o == null || !(o instanceof Point))
+         if(!(o instanceof Point))
          {
              return false;
          }
-
          Point p = (Point) o;
-
          return p.x == this.x && p.y == this.y;
      }
 
@@ -75,7 +73,7 @@ public class Point implements IPoint
          this.y = y;
      }
 
-    protected void MoveInDirection(MoveEnum direction)
+    void MoveInDirection(MoveEnum direction)
     {
         switch (direction)
         {

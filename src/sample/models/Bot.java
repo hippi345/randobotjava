@@ -1,14 +1,12 @@
 package sample.models;
 
 import sample.interfaces.IMoveablePoint;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 
 public class Bot extends Point implements IMoveablePoint
 {
-    private final boolean MOVE_INTELLIGENTLY = true;
     private HashSet<Point> visitedPoints = new HashSet<>();
     private int movementBoundary;
     private Random randomNumberGenerator = new Random(System.currentTimeMillis());
@@ -39,6 +37,7 @@ public class Bot extends Point implements IMoveablePoint
     {
         MoveEnum move;
 
+        boolean MOVE_INTELLIGENTLY = true;
         if(MOVE_INTELLIGENTLY)
         {
             move = this.DetermineIntelligentMove();
@@ -56,9 +55,7 @@ public class Bot extends Point implements IMoveablePoint
     {
         ArrayList<MoveEnum> currentPossibleMoves = getPossibleMoves();
         int randomMovementNumber = randomNumberGenerator.nextInt(currentPossibleMoves.size());
-        MoveEnum chosenMove = currentPossibleMoves.get(randomMovementNumber);
-
-        return chosenMove;
+        return currentPossibleMoves.get(randomMovementNumber);
     }
 
     // Internal method to determine the next move intelligently.
@@ -79,17 +76,14 @@ public class Bot extends Point implements IMoveablePoint
         else
         {
             int randomMovementNumber = randomNumberGenerator.nextInt(possibleMoves.size());
-            MoveEnum chosenMove = possibleMoves.get(randomMovementNumber);
-            move = chosenMove;
+            move = possibleMoves.get(randomMovementNumber);
         }
-
         return move;
     }
 
     private ArrayList<MoveEnum> getPreferredMoves(Iterable<MoveEnum> possibleMoves)
     {
         ArrayList<MoveEnum> preferredMoves = new ArrayList<>();
-
         for (MoveEnum move : possibleMoves)
         {
             switch (move)
@@ -112,23 +106,19 @@ public class Bot extends Point implements IMoveablePoint
                     break;
             }
         }
-
         return preferredMoves;
     }
 
     // Internal method to determine which moves are possible.
     private ArrayList<MoveEnum> getPossibleMoves()
     {
-        ArrayList<MoveEnum> possibleMoves = new ArrayList<MoveEnum>();
-
+        ArrayList<MoveEnum> possibleMoves = new ArrayList<>();
         if(this.y != 0) possibleMoves.add(MoveEnum.Up);
         if(this.x != this.movementBoundary - 1) possibleMoves.add(MoveEnum.Right);
         if(this.y != this.movementBoundary - 1) possibleMoves.add(MoveEnum.Down);
         if(this.x != 0) possibleMoves.add(MoveEnum.Left);
-
         return possibleMoves;
     }
-
     private boolean hasVisitedPoint(int x, int y)
     {
         return visitedPoints.contains(new Point(x, y));
