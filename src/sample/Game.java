@@ -1,5 +1,8 @@
 package sample;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.stage.Stage;
 import sample.interfaces.IGame;
 import sample.interfaces.IMoveablePoint;
 import sample.interfaces.IPoint;
@@ -23,7 +26,6 @@ class Game implements IGame
         _status = GameStatusEnum.NotStarted;
         this.bot = new Bot(gridSizePassed);
         this.treasure = new Treasure();
-
         InitializeGame(gameView);
     }
 
@@ -86,6 +88,26 @@ class Game implements IGame
 
         DetermineCurrentStatus();
         Main.gameView.adjustBotAndTreasureLocations(previousBotPoint, this.bot, this.treasure);
+        if (_status == GameStatusEnum.Complete)
+        {
+            System.out.println("You found the treasure!");
+            Thread currThreadOutside = Thread.currentThread();
+
+            Task task = new Task<Void>()
+            {
+                @Override public Void call()
+                {
+                    Main.startGUI.close();
+                    Thread currThreadOutside = Thread.currentThread();
+                    System.out.println(currThreadOutside.toString());
+                    return null;
+                }
+            };
+            Thread thread = new Thread(task);
+            thread.start();
+
+            View.setupEndGameGUI();
+        }
     }
 
     // condition checking for whether the bot is on the treasure location
@@ -96,9 +118,24 @@ class Game implements IGame
 
     private void DetermineCurrentStatus()
     {
-        if(treasureIsFound())
+        if (treasureIsFound())
         {
             _status = GameStatusEnum.Complete;
         }
+    }
+
+    // run moveBot continually with the warning on infinite loops suppressed
+    @SuppressWarnings("InfiniteLoopStatement")
+    public static void RunAutoPlay()
+    {
+        while(Main.game.GetStatus() != GameStatusEnum.Complete)
+        {
+            Main.game.MakeMove();
+        }
+    }
+
+    // sets up the Game object with bot and treasure objects in place with coordinates on the grid
+    public static void prepareGame() {
+        Main.game = new Game(Main.gridSizeForGame, Main.gameView);
     }
 }
