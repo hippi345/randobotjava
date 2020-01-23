@@ -239,4 +239,36 @@ class View
           gameView.gridPane.add(leftMovement, 0, gridSize + 6);
           gameView.gridPane.add(rightMovement, 2, gridSize + 6);
       }
+
+    public static void setupEndGameGUI()
+    {
+        Stage endGameGUI = new Stage();
+        GridPane endPane = new GridPane();
+        endPane.setHgap(5);
+        endPane.setVgap(5);
+        Text endMsg = new Text("Congrats on finding the treasure! Give it another go or quit?");
+        Button continueButton = new Button("New Game");
+        Button exitButton = new Button("Exit");
+
+        continueButton.setOnAction(event ->
+        {
+            Main.startGUI.close();
+            endGameGUI.close();
+            Main.backToStartup();
+        });
+
+        exitButton.setOnAction(event -> {
+            Main.startGUI.close();
+            endGameGUI.close();
+            System.out.println("Game closed");
+            System.exit(69);
+        });
+
+        endPane.add(endMsg, 0,0);
+        endPane.add(continueButton, 0, 2);
+        endPane.add(exitButton, 0, 3);
+
+        endGameGUI.setScene(new Scene(endPane, 300, 300));
+        endGameGUI.show();
+    }
 }

@@ -90,8 +90,7 @@ class Game implements IGame
         {
             System.out.println("You found the treasure!");
             Main.startGUI.close();
-            Main.backToStartup();
-            // System.exit(69);
+            View.setupEndGameGUI();
         }
     }
 
