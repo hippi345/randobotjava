@@ -17,10 +17,9 @@ public class Main extends Application
     {
         View startView = new View();
         startView.startScreen(startGUI, (Game) game);
-
         // set the stage and start the show
         startGUI.setTitle("Treasure Hunt");
-        startGUI.setScene(new Scene(startView.gridPane, 400, 200));
+        startGUI.setScene(new Scene(startView.gridPane, 400, 150));
         startGUI.show();
     }
 

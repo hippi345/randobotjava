@@ -1,8 +1,6 @@
 package sample;
 
-import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.stage.Stage;
 import sample.interfaces.IGame;
 import sample.interfaces.IMoveablePoint;
 import sample.interfaces.IPoint;
@@ -78,11 +76,11 @@ class Game implements IGame
     {
         // Set status
         if(_status == GameStatusEnum.Complete) return;
-        else if(_status == GameStatusEnum.NotStarted) _status = GameStatusEnum.InProgress;
+        else if(_status == GameStatusEnum.NotStarted)
+            _status = GameStatusEnum.InProgress;
 
         ++turnCount;
         System.out.println("Current turn: " + turnCount);
-
         IPoint previousBotPoint = new Point(this.bot);
         this.bot.Move(botMovementDirection);
 
@@ -91,8 +89,6 @@ class Game implements IGame
         if (_status == GameStatusEnum.Complete)
         {
             System.out.println("You found the treasure!");
-            Thread currThreadOutside = Thread.currentThread();
-
             Task task = new Task<Void>()
             {
                 @Override public Void call()
@@ -105,7 +101,6 @@ class Game implements IGame
             };
             Thread thread = new Thread(task);
             thread.start();
-
             View.setupEndGameGUI();
         }
     }
@@ -126,7 +121,7 @@ class Game implements IGame
 
     // run moveBot continually with the warning on infinite loops suppressed
     @SuppressWarnings("InfiniteLoopStatement")
-    public static void RunAutoPlay()
+    static void RunAutoPlay()
     {
         while(Main.game.GetStatus() != GameStatusEnum.Complete)
         {
@@ -135,7 +130,7 @@ class Game implements IGame
     }
 
     // sets up the Game object with bot and treasure objects in place with coordinates on the grid
-    public static void prepareGame() {
+    static void prepareGame() {
         Main.game = new Game(Main.gridSizeForGame, Main.gameView);
     }
 }

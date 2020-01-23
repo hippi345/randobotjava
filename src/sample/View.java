@@ -1,7 +1,6 @@
 package sample;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,7 +13,6 @@ import sample.interfaces.IGame;
 import sample.interfaces.IPoint;
 import sample.models.MoveEnum;
 import sample.models.Point;
-import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.function.Consumer;
 
@@ -24,7 +22,7 @@ class View
     private static View instance = null;
     GridPane gridPane;
     int gridSize = Constants.DEFAULT_GRIDSIZE;
-    Hashtable<IPoint, Node> _pointNodeMap = new Hashtable<>();
+    private Hashtable<IPoint, Node> _pointNodeMap = new Hashtable<>();
 
     // Constructor must be private for the Singleton pattern.
     View()
@@ -40,7 +38,8 @@ class View
     }
 
     // setting up gaps specific to every grid pane
-    void setupTheGridPane() {
+    private void setupTheGridPane()
+    {
         this.gridPane.setHgap(8);
         this.gridPane.setVgap(8);
         setupGUI();
@@ -66,6 +65,7 @@ class View
         // gap between elements in the start screen
         this.gridPane.setHgap(8);
         this.gridPane.setVgap(8);
+        this.gridPane.setPadding(new Insets(10, 10, 10, 10));
         this.gridPane.setStyle(Constants.LIGHT_BLUE);
 
         // elements for the start screen gui stage
@@ -76,13 +76,9 @@ class View
         TextField gridSizeStart = new TextField();
 
         // force the field to be numeric only
-        gridSizeStart.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue,
-                                String newValue) {
-                if (!newValue.matches("\\d*")) {
-                    gridSizeStart.setText(newValue.replaceAll("[^\\d]", ""));
-                }
+        gridSizeStart.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                gridSizeStart.setText(newValue.replaceAll("[^\\d]", ""));
             }
         });
 
@@ -90,8 +86,8 @@ class View
         submitStart.setOnAction(actionEvent -> prepTheGame(defaultBehaviors, gridSizeStart, startGUI, game));
         // listener on the checkbox such that the defaults are applied, the text is cleared
         // the checkbox is also checked on the game running for whether to apply defaults or not
-        defaultBehaviors.selectedProperty().addListener((observable, oldValue,
-                                                         newValue) -> gridSizeStart.setText(""));
+        defaultBehaviors.selectedProperty().addListener((observable,
+                                                         oldValue, newValue) -> gridSizeStart.setText(""));
         // add the elements to the grid pane
         this.gridPane.add(handle,0,0);
         this.gridPane.add(argInquire,0, 1);
@@ -103,25 +99,19 @@ class View
     private void prepTheGame(CheckBox defaults, TextField textInput, Stage startGUI, Game game)
     {
         int gridSize;
-            // if defaults are checked then apply the default 5x5 size
-        if (defaults.isSelected())
-            {
+        if (defaults.isSelected()) {
                 textInput.clear();
                 gridSize = Constants.DEFAULT_GRIDSIZE;
             }
         else {
             gridSize = Integer.parseInt(textInput.getText());
-            if (gridSize > Constants.MAX_GRIDSIZE)
-                {
+            if (gridSize > Constants.MAX_GRIDSIZE) {
                     gridSize = Constants.MAX_GRIDSIZE;
                     alertMsgOnMax();
                 }
             }
         startGUI.close();
-        // apply the computed grid size to the grid pane used in main which
-        // is the central grid pane resource for setting up the game gui
         Main.gridSizeForGame = gridSize;
-        // start the actual game gui
         startGameGUI(gridSize, game);
     }
 
@@ -142,26 +132,18 @@ class View
 
     // startup of the game gui stage
     private void startGameGUI(int parseInt, Game game) {
-        // creating the new game stage gui and view
         View gameView = new View();
-        // setting the view grid size
         gameView.setGridSize(parseInt);
-        // setting the main game view to a fresh game view
         Main.gameView = gameView;
-        // establishes the actual View for the game which is managed in the View class
-
-        // creation of the grid pane
         gameView.setupTheGridPane();
+        gameView.gridPane.setPadding(new Insets(10,10,10,10));
 
-        // preparation of the game components for movement and treasure hunting
         Game.prepareGame();
         View.setupView(gameView);
 
-        // size based on arg algorithm
         double size = (13.0 * Math.pow(parseInt,2)) + 50;
-        // set the stage and start the show
         mainGame.setTitle("Treasure Hunt");
-        mainGame.setScene(new Scene(gameView.gridPane, size, size));
+        mainGame.setScene(new Scene(gameView.gridPane, size, size+25));
         mainGame.show();
     }
 
@@ -180,7 +162,7 @@ class View
     }
 
     // sets the text on the nodes to reflect the move just made
-    public void adjustBotAndTreasureLocations(IPoint previousBotPosition, IPoint currentBotPosition, IPoint treasurePosition) {
+    void adjustBotAndTreasureLocations(IPoint previousBotPosition, IPoint currentBotPosition, IPoint treasurePosition) {
         if(previousBotPosition != null)
         {
             Node previousNode = _pointNodeMap.get(previousBotPosition);
@@ -198,8 +180,8 @@ class View
     }
 
     // setting up the button element components of the game gui
-    void setupButtons(Consumer<Object> nextFunction, Consumer<Object> resetFunction, Consumer<Object> autoPlayFunction,
-    Consumer<Object> leaveGame)
+    private void setupButtons(Consumer<Object> nextFunction, Consumer<Object> resetFunction, Consumer<Object> autoPlayFunction,
+                              Consumer<Object> leaveGame)
     {
         // four main buttons
         Button nextPlay = new Button("Next move");
@@ -221,7 +203,7 @@ class View
         gridPane.add(exit, 1, gridSize + 4);
 
     }
-    void setupDirectionButtons(IGame game, View gameView)
+    private void setupDirectionButtons(IGame game, View gameView)
       {
           // cardinal buttons
           Button upMovement = new Button("Move Up");
@@ -240,12 +222,13 @@ class View
           gameView.gridPane.add(rightMovement, 2, gridSize + 6);
       }
 
-    public static void setupEndGameGUI()
+    static void setupEndGameGUI()
     {
         Stage endGameGUI = new Stage();
         GridPane endPane = new GridPane();
         endPane.setHgap(5);
         endPane.setVgap(5);
+        endPane.setPadding(new Insets(10, 10, 10, 10));
         Text endMsg = new Text("Congrats on finding the treasure! Give it another go or quit?");
         Button continueButton = new Button("New Game");
         Button exitButton = new Button("Exit");
@@ -267,12 +250,12 @@ class View
         endPane.add(endMsg, 0,0);
         endPane.add(continueButton, 0, 2);
         endPane.add(exitButton, 0, 3);
-
-        endGameGUI.setScene(new Scene(endPane, 300, 300));
+        endPane.setStyle(Constants.LIGHT_BLUE);
+        endGameGUI.setScene(new Scene(endPane, 345, 125));
         endGameGUI.show();
     }
 
-    public static void setupView(View gameView)
+    private static void setupView(View gameView)
     {
         // setting up the buttons which go into the UI
         gameView.setupButtons(
@@ -280,7 +263,6 @@ class View
                 (o) -> Game.prepareGame(),
                 (o) -> Game.RunAutoPlay(),
                 (o) -> Main.backToStartup());
-
         gameView.setupDirectionButtons(Main.game, gameView);
     }
 }
