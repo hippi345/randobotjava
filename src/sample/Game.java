@@ -27,6 +27,11 @@ class Game implements IGame
         InitializeGame(gameView);
     }
 
+    public GameStatusEnum getGameStatus()
+    {
+        return this._status;
+    }
+
     @Override
     public void MakeMove()
     {
