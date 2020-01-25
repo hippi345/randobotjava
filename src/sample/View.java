@@ -14,12 +14,11 @@ import sample.interfaces.IGame;
 import sample.interfaces.IPoint;
 import sample.models.MoveEnum;
 import sample.models.Point;
-
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.function.Consumer;
 
-public class View
+class View
 {
     static Stage mainGame;
     private static View instance = null;
@@ -62,7 +61,7 @@ public class View
     }
 
     // setting up the start screen
-    void startScreen(Stage startGUI)
+    void startScreen(Stage startGUI, Game game)
     {
         // gap between elements in the start screen
         this.gridPane.setHgap(8);
@@ -88,7 +87,7 @@ public class View
         });
 
         // button action to start the actual game
-        submitStart.setOnAction(actionEvent -> prepTheGame(defaultBehaviors, gridSizeStart, startGUI));
+        submitStart.setOnAction(actionEvent -> prepTheGame(defaultBehaviors, gridSizeStart, startGUI, game));
         // listener on the checkbox such that the defaults are applied, the text is cleared
         // the checkbox is also checked on the game running for whether to apply defaults or not
         defaultBehaviors.selectedProperty().addListener((observable, oldValue,
@@ -101,7 +100,7 @@ public class View
         this.gridPane.add(submitStart,0,3);
     }
 
-    private void prepTheGame(CheckBox defaults, TextField textInput, Stage startGUI)
+    private void prepTheGame(CheckBox defaults, TextField textInput, Stage startGUI, Game game)
     {
         int gridSize;
             // if defaults are checked then apply the default 5x5 size
@@ -123,7 +122,7 @@ public class View
         // is the central grid pane resource for setting up the game gui
         Main.gridSizeForGame = gridSize;
         // start the actual game gui
-        startGameGUI(gridSize);
+        startGameGUI(gridSize, game);
     }
 
     // creates a pop up GUI stage alerting the user that the number provided exceeds the max so the max was used
@@ -142,7 +141,7 @@ public class View
     }
 
     // startup of the game gui stage
-    private void startGameGUI(int parseInt) {
+    private void startGameGUI(int parseInt, Game game) {
         // creating the new game stage gui and view
         View gameView = new View();
         // setting the view grid size
@@ -156,7 +155,6 @@ public class View
 
         // preparation of the game components for movement and treasure hunting
         Main.prepareGame();
-
         Main.setupView(gameView);
 
         // size based on arg algorithm
@@ -223,24 +221,54 @@ public class View
         gridPane.add(exit, 1, gridSize + 4);
 
     }
-
     void setupDirectionButtons(IGame game, View gameView)
+      {
+          // cardinal buttons
+          Button upMovement = new Button("Move Up");
+          Button downMovement = new Button("Move Down");
+          Button leftMovement = new Button("Move Left");
+          Button rightMovement = new Button("Move Right");
+          upMovement.setOnAction(event -> game.MakeMove(MoveEnum.Up));
+          downMovement.setOnAction(event -> game.MakeMove(MoveEnum.Down));
+          leftMovement.setOnAction(event -> game.MakeMove(MoveEnum.Left));
+          rightMovement.setOnAction(event -> game.MakeMove(MoveEnum.Right));
+
+          // buttons to the grid pane
+          gameView.gridPane.add(upMovement, 1, gridSize + 5);
+          gameView.gridPane.add(downMovement, 1, gridSize + 7);
+          gameView.gridPane.add(leftMovement, 0, gridSize + 6);
+          gameView.gridPane.add(rightMovement, 2, gridSize + 6);
+      }
+
+    public static void setupEndGameGUI()
     {
-        // cardinal buttons
-        Button upMovement = new Button("Move Up");
-        Button downMovement = new Button("Move Down");
-        Button leftMovement = new Button("Move Left");
-        Button rightMovement = new Button("Move Right");
+        Stage endGameGUI = new Stage();
+        GridPane endPane = new GridPane();
+        endPane.setHgap(5);
+        endPane.setVgap(5);
+        Text endMsg = new Text("Congrats on finding the treasure! Give it another go or quit?");
+        Button continueButton = new Button("New Game");
+        Button exitButton = new Button("Exit");
 
-        upMovement.setOnAction(event -> game.MakeMove(MoveEnum.Up));
-        downMovement.setOnAction(event -> game.MakeMove(MoveEnum.Down));
-        leftMovement.setOnAction(event -> game.MakeMove(MoveEnum.Left));
-        rightMovement.setOnAction(event -> game.MakeMove(MoveEnum.Right));
+        continueButton.setOnAction(event ->
+        {
+            Main.startGUI.close();
+            endGameGUI.close();
+            Main.backToStartup();
+        });
 
-        // buttons to the grid pane
-        gameView.gridPane.add(upMovement, 1, gridSize + 5);
-        gameView.gridPane.add(downMovement, 1, gridSize + 7);
-        gameView.gridPane.add(leftMovement, 0, gridSize + 6);
-        gameView.gridPane.add(rightMovement, 2, gridSize + 6);
+        exitButton.setOnAction(event -> {
+            Main.startGUI.close();
+            endGameGUI.close();
+            System.out.println("Game closed");
+            System.exit(69);
+        });
+
+        endPane.add(endMsg, 0,0);
+        endPane.add(continueButton, 0, 2);
+        endPane.add(exitButton, 0, 3);
+
+        endGameGUI.setScene(new Scene(endPane, 300, 300));
+        endGameGUI.show();
     }
 }

@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.stage.Stage;
 import sample.interfaces.IGame;
 import sample.interfaces.IMoveablePoint;
 import sample.interfaces.IPoint;
@@ -23,10 +24,9 @@ class Game implements IGame
         _status = GameStatusEnum.NotStarted;
         this.bot = new Bot(gridSizePassed);
         this.treasure = new Treasure();
-
         InitializeGame(gameView);
     }
-
+    
     @Override
     public void MakeMove()
     {
@@ -86,6 +86,11 @@ class Game implements IGame
 
         DetermineCurrentStatus();
         Main.gameView.adjustBotAndTreasureLocations(previousBotPoint, this.bot, this.treasure);
+        if (_status == GameStatusEnum.Complete)
+        {
+            System.out.println("You found the treasure!");
+            View.setupEndGameGUI();
+        }
     }
 
     // condition checking for whether the bot is on the treasure location
@@ -96,7 +101,7 @@ class Game implements IGame
 
     private void DetermineCurrentStatus()
     {
-        if(treasureIsFound())
+        if (treasureIsFound())
         {
             _status = GameStatusEnum.Complete;
         }
