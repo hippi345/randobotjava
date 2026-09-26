@@ -1,11 +1,20 @@
-# Ignore the .idea folder
+# IDE
 .idea/
-
-# Ignore the out folder
-out/
-
-# IML files
 *.iml
+.vscode/
+*.swp
+*~
 
-# yml files
-*.yml
+# Build
+target/
+out/
+build/
+bin/
+obj/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
