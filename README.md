@@ -57,7 +57,7 @@ mvn spotless:apply   # auto-format
 ## Project structure
 
 ```
-├── pom.xml                          # Maven build (Java 21, JavaFX, JUnit 5)
+├── pom.xml                          # Maven build (Java 21, JavaFX, JUnit 6)
 ├── src/main/java/sample/
 │   ├── Main.java                    # JavaFX application entry
 │   ├── Game.java                    # Game rules and turns
@@ -65,7 +65,7 @@ mvn spotless:apply   # auto-format
 │   ├── Constants.java               # Grid defaults
 │   ├── interfaces/                  # Game and point contracts
 │   └── models/                      # Bot, treasure, grid types
-└── src/test/java/                   # JUnit 5 tests
+└── src/test/java/                   # JUnit 6 tests
 ```
 
 ## License
