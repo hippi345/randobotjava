@@ -14,7 +14,7 @@ A JavaFX desktop game where a robot hunts for treasure on a grid. You can play m
 
 ## Requirements
 
-- **JDK 21** (LTS)
+- **JDK 25** (LTS)
 - **Maven 3.9+** (for builds)
 - A display for the JavaFX UI (desktop environment)
 
@@ -38,7 +38,7 @@ Or after packaging:
 
 ```bash
 mvn -B package
-java --module-path "$HOME/.m2/repository/org/openjfx/javafx-controls/21.0.6/javafx-controls-21.0.6.jar:$(dirname $(find ~/.m2/repository/org/openjfx -name 'javafx-graphics*.jar' | head -1))" --add-modules javafx.controls,javafx.graphics -cp target/randobotjava-1.0.0-SNAPSHOT.jar sample.Main
+java --module-path "$HOME/.m2/repository/org/openjfx/javafx-controls/27.0.1/javafx-controls-27.0.1.jar:$(dirname $(find ~/.m2/repository/org/openjfx -name 'javafx-graphics*.jar' | head -1))" --add-modules javafx.controls,javafx.graphics -cp target/randobotjava-1.0.0-SNAPSHOT.jar sample.Main
 ```
 
 Using the Maven JavaFX plugin (`mvn javafx:run`) is the simplest option.
@@ -57,7 +57,7 @@ mvn spotless:apply   # auto-format
 ## Project structure
 
 ```
-├── pom.xml                          # Maven build (Java 21, JavaFX, JUnit 6)
+├── pom.xml                          # Maven build (Java 25, JavaFX, JUnit 6)
 ├── src/main/java/sample/
 │   ├── Main.java                    # JavaFX application entry
 │   ├── Game.java                    # Game rules and turns
